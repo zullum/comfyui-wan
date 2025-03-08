@@ -198,7 +198,6 @@ if [ "$change_preview_method" == "true" ]; then
     echo "Updating default preview method..."
     sed -i '/id: *'"'"'VHS.LatentPreview'"'"'/,/defaultValue:/s/defaultValue: false/defaultValue: true/' $NETWORK_VOLUME/ComfyUI/custom_nodes/ComfyUI-VideoHelperSuite/web/js/VHS.core.js
     sed -i 's/preview_method = none/preview_method = auto/' "$file_path"
-
     echo "Default preview method updated to 'auto'"
 else
     echo "Skipping preview method update (change_preview_method is not 'true')."
