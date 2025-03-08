@@ -177,6 +177,22 @@ for WORKFLOW in "${WORKFLOWS[@]}"; do
     fi
 done
 
+declare -A MODEL_CATEGORIES=(
+    ["$NETWORK_VOLUME/ComfyUI/models/checkpoints"]="$CHECKPOINT_IDS_TO_DOWNLOAD"
+    ["$NETWORK_VOLUME/ComfyUI/models/loras"]="$LORAS_IDS_TO_DOWNLOAD"
+)
+
+# Ensure directories exist and download models
+for TARGET_DIR in "${!MODEL_CATEGORIES[@]}"; do
+    mkdir -p "$TARGET_DIR"
+    IFS=',' read -ra MODEL_IDS <<< "${MODEL_CATEGORIES[$TARGET_DIR]}"
+
+    for MODEL_ID in "${MODEL_IDS[@]}"; do
+        echo "Downloading model: $MODEL_ID to $TARGET_DIR"
+        (cd "$TARGET_DIR" && download.py --model "$MODEL_ID")
+    done
+done
+
 # Workspace as main working directory
 echo "cd $NETWORK_VOLUME" >> ~/.bashrc
 
