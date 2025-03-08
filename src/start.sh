@@ -194,10 +194,42 @@ for TARGET_DIR in "${!MODEL_CATEGORIES[@]}"; do
 done
 
 if [ "$change_preview_method" == "true" ]; then
-    file_path="/ComfyUI/user/default/ComfyUI-Manager/config.ini"
     echo "Updating default preview method..."
     sed -i '/id: *'"'"'VHS.LatentPreview'"'"'/,/defaultValue:/s/defaultValue: false/defaultValue: true/' $NETWORK_VOLUME/ComfyUI/custom_nodes/ComfyUI-VideoHelperSuite/web/js/VHS.core.js
-    sed -i 's/preview_method = none/preview_method = auto/' "$file_path"
+    CONFIG_PATH="/ComfyUI/user/default/ComfyUI-Manager"
+    CONFIG_FILE="$CONFIG_PATH/config.ini"
+
+# Ensure the directory exists
+mkdir -p "$CONFIG_PATH"
+
+# Create the config file if it doesn't exist
+if [ ! -f "$CONFIG_FILE" ]; then
+    echo "Creating config.ini..."
+    cat <<EOL > "$CONFIG_FILE"
+[default]
+preview_method = auto
+git_exe =
+use_uv = False
+channel_url = https://raw.githubusercontent.com/ltdrdata/ComfyUI-Manager/main
+share_option = all
+bypass_ssl = False
+file_logging = True
+component_policy = workflow
+update_policy = stable-comfyui
+windows_selector_event_loop_policy = False
+model_download_by_agent = False
+downgrade_blacklist =
+security_level = normal
+skip_migration_check = False
+always_lazy_install = False
+network_mode = public
+db_mode = cache
+EOL
+else
+    echo "config.ini already exists. Updating preview_method..."
+    sed -i 's/^preview_method = .*/preview_method = auto/' "$CONFIG_FILE"
+fi
+echo "Config file setup complete!"
     echo "Default preview method updated to 'auto'"
 else
     echo "Skipping preview method update (change_preview_method is not 'true')."
