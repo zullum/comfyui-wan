@@ -193,13 +193,13 @@ for TARGET_DIR in "${!MODEL_CATEGORIES[@]}"; do
     done
 done
 
-if ["$change_preview_method" == "true"]; then
+if [ "$change_preview_method" == "true" ]; then
     echo "Updating default preview method..."
     sed -i '/def get_current_preview_method()/,/^    return /s/return "none"/return "auto"/' $NETWORK_VOLUME/ComfyUI/custom_nodes/ComfyUI-Manager/glob/manager_core.py
     sed -i '/id: *'"'"'VHS.LatentPreview'"'"'/,/defaultValue:/s/defaultValue: false/defaultValue: true/' $NETWORK_VOLUME/ComfyUI/custom_nodes/ComfyUI-VideoHelperSuite/web/js/VHS.core.js
     echo "Default preview method updated to 'auto'"
 else
-    echo "Skipping preview method update (CHANGE_PREVIEW_METHOD is not 'true')."
+    echo "Skipping preview method update (change_preview_method is not 'true')."
 fi
 
 # Workspace as main working directory
