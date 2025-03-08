@@ -178,14 +178,23 @@ for WORKFLOW in "${WORKFLOWS[@]}"; do
 done
 
 declare -A MODEL_CATEGORIES=(
-    ["$NETWORK_VOLUME/ComfyUI/models/checkpoints"]="$CHECKPOINT_IDS_TO_DOWNLOAD"
-    ["$NETWORK_VOLUME/ComfyUI/models/loras"]="$LORAS_IDS_TO_DOWNLOAD"
+    ["$NETWORK_VOLUME/ComfyUI/models/checkpoints"]="CHECKPOINT_IDS_TO_DOWNLOAD"
+    ["$NETWORK_VOLUME/ComfyUI/models/loras"]="LORAS_IDS_TO_DOWNLOAD"
 )
 
 # Ensure directories exist and download models
 for TARGET_DIR in "${!MODEL_CATEGORIES[@]}"; do
+    ENV_VAR_NAME="${MODEL_CATEGORIES[$TARGET_DIR]}"
+    MODEL_IDS_STRING="${!ENV_VAR_NAME}"  # Get the value of the environment variable
+
+    # Skip if the environment variable is set to "ids_here"
+    if [ "$MODEL_IDS_STRING" == "ids_here" ]; then
+        echo "Skipping downloads for $TARGET_DIR ($ENV_VAR_NAME is 'ids_here')"
+        continue
+    fi
+
     mkdir -p "$TARGET_DIR"
-    IFS=',' read -ra MODEL_IDS <<< "${MODEL_CATEGORIES[$TARGET_DIR]}"
+    IFS=',' read -ra MODEL_IDS <<< "$MODEL_IDS_STRING"
 
     for MODEL_ID in "${MODEL_IDS[@]}"; do
         echo "Downloading model: $MODEL_ID to $TARGET_DIR"
