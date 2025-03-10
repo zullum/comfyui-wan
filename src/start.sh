@@ -49,103 +49,109 @@ pip install huggingface_hub
 # Change to the directory
 cd "$CUSTOM_NODES_DIR" || exit 1
 
-if [ "$download_quantized_model" == "true" ]; then
-  mkdir -p "$NETWORK_VOLUME/ComfyUI/models/diffusion_models"
-  if [ ! -f "$NETWORK_VOLUME/ComfyUI/models/diffusion_models/Wan2_1-T2V-14B_fp8_e4m3fn.safetensors" ]; then
-      wget -c -O "$NETWORK_VOLUME/ComfyUI/models/diffusion_models/Wan2_1-T2V-14B_fp8_e4m3fn.safetensors" \
-      https://huggingface.co/Kijai/WanVideo_comfy/resolve/main/Wan2_1-T2V-14B_fp8_e4m3fn.safetensors
-  fi
-  if [ ! -f "$NETWORK_VOLUME/ComfyUI/models/diffusion_models/Wan2_1-I2V-14B-720P_fp8_e4m3fn.safetensors" ]; then
-      wget -c -O "$NETWORK_VOLUME/ComfyUI/models/diffusion_models/Wan2_1-I2V-14B-720P_fp8_e4m3fn.safetensors" \
-      https://huggingface.co/Kijai/WanVideo_comfy/resolve/main/Wan2_1-I2V-14B-720P_fp8_e4m3fn.safetensors
-  fi
-  if [ ! -f "$NETWORK_VOLUME/ComfyUI/models/diffusion_models/wan2.1_t2v_1.3B_fp16.safetensors" ]; then
-      wget -c -O "$NETWORK_VOLUME/ComfyUI/models/diffusion_models/wan2.1_t2v_1.3B_fp16.safetensors" \
-      https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/main/split_files/diffusion_models/wan2.1_t2v_1.3B_fp16.safetensors
-  fi
-fi
-if [ "$download_480p_hugging_face" == "true" ]; then
-  mkdir -p "$NETWORK_VOLUME/ComfyUI/models/diffusion_models"
-  HF_REPO="Comfy-Org/Wan_2.1_ComfyUI_repackaged"
-  DEST_DIR="$NETWORK_VOLUME/ComfyUI/models/diffusion_models"
+# Function to download a model using huggingface-cli
+download_model() {
+  local destination_dir="$1"
+  local destination_file="$2"
+  local repo_id="$3"
+  local file_path="$4"
 
-  # List of model files to download
-  MODEL_FILES=(
-    "split_files/diffusion_models/wan2.1_i2v_480p_14B_bf16.safetensors"
-    "split_files/diffusion_models/wan2.1_t2v_14B_bf16.safetensors"
-    "split_files/diffusion_models/wan2.1_t2v_1.3B_fp16.safetensors"
-  )
+  mkdir -p "$destination_dir"
 
-  # Download each file if it doesn't exist
-  for MODEL_FILE in "${MODEL_FILES[@]}"; do
-    if [ ! -f "$DEST_DIR/$(basename $MODEL_FILE)" ]; then
-      echo "Downloading: $MODEL_FILE"
-      huggingface-cli download "$HF_REPO" "$MODEL_FILE" --local-dir "$DEST_DIR" --resume-download
+  if [ ! -f "$destination_dir/$destination_file" ]; then
+    echo "Downloading $destination_file..."
+
+    # First, download to a temporary directory
+    local temp_dir=$(mktemp -d)
+    huggingface-cli download "$repo_id" "$file_path" --local-dir "$temp_dir" --resume-download
+
+    # Find the downloaded file in the temp directory (may be in subdirectories)
+    local downloaded_file=$(find "$temp_dir" -type f -name "$(basename "$file_path")")
+
+    # Move it to the destination directory with the correct name
+    if [ -n "$downloaded_file" ]; then
+      mv "$downloaded_file" "$destination_dir/$destination_file"
+      echo "Successfully downloaded to $destination_dir/$destination_file"
     else
-      echo "File already exists: $(basename $MODEL_FILE), skipping..."
+      echo "Error: File not found after download"
     fi
-  done
+
+    # Clean up temporary directory
+    rm -rf "$temp_dir"
+  else
+    echo "$destination_file already exists, skipping download."
+  fi
+}
+
+# Define base paths
+DIFFUSION_MODELS_DIR="$NETWORK_VOLUME/ComfyUI/models/diffusion_models"
+TEXT_ENCODERS_DIR="$NETWORK_VOLUME/ComfyUI/models/text_encoders"
+CLIP_VISION_DIR="$NETWORK_VOLUME/ComfyUI/models/clip_vision"
+VAE_DIR="$NETWORK_VOLUME/ComfyUI/models/vae"
+
+# Download quantized models
+if [ "$download_quantized_model" == "true" ]; then
+  echo "Downloading quantized models..."
+
+  download_model "$DIFFUSION_MODELS_DIR" "Wan2_1-T2V-14B_fp8_e4m3fn.safetensors" \
+    "Kijai/WanVideo_comfy" "Wan2_1-T2V-14B_fp8_e4m3fn.safetensors"
+
+  download_model "$DIFFUSION_MODELS_DIR" "Wan2_1-I2V-14B-720P_fp8_e4m3fn.safetensors" \
+    "Kijai/WanVideo_comfy" "Wan2_1-I2V-14B-720P_fp8_e4m3fn.safetensors"
+
+  download_model "$DIFFUSION_MODELS_DIR" "wan2.1_t2v_1.3B_fp16.safetensors" \
+    "Comfy-Org/Wan_2.1_ComfyUI_repackaged" "split_files/diffusion_models/wan2.1_t2v_1.3B_fp16.safetensors"
 fi
+
+# Download 480p native models
 if [ "$download_480p_native_models" == "true" ]; then
-  mkdir -p "$NETWORK_VOLUME/ComfyUI/models/diffusion_models"
-  if [ ! -f "$NETWORK_VOLUME/ComfyUI/models/diffusion_models/wan2.1_i2v_480p_14B_bf16.safetensors" ]; then
-      wget -c -O "$NETWORK_VOLUME/ComfyUI/models/diffusion_models/wan2.1_i2v_480p_14B_bf16.safetensors" \
-      https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/main/split_files/diffusion_models/wan2.1_i2v_480p_14B_bf16.safetensors
-  fi
-  if [ ! -f "$NETWORK_VOLUME/ComfyUI/models/diffusion_models/wan2.1_t2v_14B_bf16.safetensors" ]; then
-      wget -c -O "$NETWORK_VOLUME/ComfyUI/models/diffusion_models/wan2.1_t2v_14B_bf16.safetensors" \
-      https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/main/split_files/diffusion_models/wan2.1_t2v_14B_bf16.safetensors
-  fi
-  if [ ! -f "$NETWORK_VOLUME/ComfyUI/models/diffusion_models/wan2.1_t2v_1.3B_fp16.safetensors" ]; then
-      wget -c -O "$NETWORK_VOLUME/ComfyUI/models/diffusion_models/wan2.1_t2v_1.3B_fp16.safetensors" \
-      https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/main/split_files/diffusion_models/wan2.1_t2v_1.3B_fp16.safetensors
-  fi
+  echo "Downloading 480p native models..."
+
+  download_model "$DIFFUSION_MODELS_DIR" "wan2.1_i2v_480p_14B_bf16.safetensors" \
+    "Comfy-Org/Wan_2.1_ComfyUI_repackaged" "split_files/diffusion_models/wan2.1_i2v_480p_14B_bf16.safetensors"
+
+  download_model "$DIFFUSION_MODELS_DIR" "wan2.1_t2v_14B_bf16.safetensors" \
+    "Comfy-Org/Wan_2.1_ComfyUI_repackaged" "split_files/diffusion_models/wan2.1_t2v_14B_bf16.safetensors"
+
+  download_model "$DIFFUSION_MODELS_DIR" "wan2.1_t2v_1.3B_fp16.safetensors" \
+    "Comfy-Org/Wan_2.1_ComfyUI_repackaged" "split_files/diffusion_models/wan2.1_t2v_1.3B_fp16.safetensors"
 fi
+
+# Download 720p native models
 if [ "$download_720p_native_models" == "true" ]; then
-  mkdir -p "$NETWORK_VOLUME/ComfyUI/models/diffusion_models"
-  if [ ! -f "$NETWORK_VOLUME/ComfyUI/models/diffusion_models/wan2.1_i2v_720p_14B_bf16.safetensors" ]; then
-      wget -c -O "$NETWORK_VOLUME/ComfyUI/models/diffusion_models/wan2.1_i2v_720p_14B_bf16.safetensors" \
-      https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/main/split_files/diffusion_models/wan2.1_i2v_720p_14B_bf16.safetensors
-  fi
-  if [ ! -f "$NETWORK_VOLUME/ComfyUI/models/diffusion_models/wan2.1_t2v_14B_bf16.safetensors" ]; then
-      wget -c -O "$NETWORK_VOLUME/ComfyUI/models/diffusion_models/wan2.1_t2v_14B_bf16.safetensors" \
-      https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/main/split_files/diffusion_models/wan2.1_t2v_14B_bf16.safetensors
-  fi
-  if [ ! -f "$NETWORK_VOLUME/ComfyUI/models/diffusion_models/wan2.1_t2v_1.3B_fp16.safetensors" ]; then
-      wget -c -O "$NETWORK_VOLUME/ComfyUI/models/diffusion_models/wan2.1_t2v_1.3B_fp16.safetensors" \
-      https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/main/split_files/diffusion_models/wan2.1_t2v_1.3B_fp16.safetensors
-  fi
+  echo "Downloading 720p native models..."
+
+  download_model "$DIFFUSION_MODELS_DIR" "wan2.1_i2v_720p_14B_bf16.safetensors" \
+    "Comfy-Org/Wan_2.1_ComfyUI_repackaged" "split_files/diffusion_models/wan2.1_i2v_720p_14B_bf16.safetensors"
+
+  download_model "$DIFFUSION_MODELS_DIR" "wan2.1_t2v_14B_bf16.safetensors" \
+    "Comfy-Org/Wan_2.1_ComfyUI_repackaged" "split_files/diffusion_models/wan2.1_t2v_14B_bf16.safetensors"
+
+  download_model "$DIFFUSION_MODELS_DIR" "wan2.1_t2v_1.3B_fp16.safetensors" \
+    "Comfy-Org/Wan_2.1_ComfyUI_repackaged" "split_files/diffusion_models/wan2.1_t2v_1.3B_fp16.safetensors"
 fi
 
-echo "Downloading text encoders"
-mkdir -p "$NETWORK_VOLUME/ComfyUI/models/text_encoders"
-if [ ! -f "$NETWORK_VOLUME/ComfyUI/models/text_encoders/umt5-xxl-enc-bf16.safetensors" ]; then
-    wget -O "$NETWORK_VOLUME/ComfyUI/models/text_encoders/umt5-xxl-enc-bf16.safetensors" \
-    https://huggingface.co/Kijai/WanVideo_comfy/resolve/main/umt5-xxl-enc-bf16.safetensors
-fi
-if [ ! -f "$NETWORK_VOLUME/ComfyUI/models/text_encoders/umt5_xxl_fp8_e4m3fn_scaled.safetensors" ]; then
-    wget -O "$NETWORK_VOLUME/ComfyUI/models/text_encoders/umt5_xxl_fp8_e4m3fn_scaled.safetensors" \
-    https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/main/split_files/text_encoders/umt5_xxl_fp8_e4m3fn_scaled.safetensors
-fi
-if [ ! -f "$NETWORK_VOLUME/ComfyUI/models/text_encoders/open-clip-xlm-roberta-large-vit-huge-14_visual_fp16.safetensors" ]; then
-    wget -O "$NETWORK_VOLUME/ComfyUI/models/text_encoders/open-clip-xlm-roberta-large-vit-huge-14_visual_fp16.safetensors" \
-    https://huggingface.co/Kijai/WanVideo_comfy/resolve/main/open-clip-xlm-roberta-large-vit-huge-14_visual_fp16.safetensors
-fi
-if [ ! -f "$NETWORK_VOLUME/ComfyUI/models/clip_vision/clip_vision_h.safetensors" ]; then
-    wget -O "$NETWORK_VOLUME/ComfyUI/models/clip_vision/clip_vision_h.safetensors" \
-    https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/main/split_files/clip_vision/clip_vision_h.safetensors
-fi
+# Download text encoders
+echo "Downloading text encoders..."
 
-echo "Downloading VAE"
-mkdir -p "$NETWORK_VOLUME/ComfyUI/models/vae"
-if [ ! -f "$NETWORK_VOLUME/ComfyUI/models/vae/Wan2_1_VAE_bf16.safetensors" ]; then
-    wget -O "$NETWORK_VOLUME/ComfyUI/models/vae/Wan2_1_VAE_bf16.safetensors" \
-    https://huggingface.co/Kijai/WanVideo_comfy/resolve/main/Wan2_1_VAE_bf16.safetensors
-fi
-if [ ! -f "$NETWORK_VOLUME/ComfyUI/models/vae/wan_2.1_vae.safetensors" ]; then
-    wget -O "$NETWORK_VOLUME/ComfyUI/models/vae/wan_2.1_vae.safetensors" \
-    https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/main/split_files/vae/wan_2.1_vae.safetensors
-fi
+download_model "$TEXT_ENCODERS_DIR" "umt5_xxl_fp8_e4m3fn_scaled.safetensors" \
+  "Comfy-Org/Wan_2.1_ComfyUI_repackaged" "split_files/text_encoders/umt5_xxl_fp8_e4m3fn_scaled.safetensors"
+
+download_model "$TEXT_ENCODERS_DIR" "open-clip-xlm-roberta-large-vit-huge-14_visual_fp16.safetensors" \
+  "Kijai/WanVideo_comfy" "open-clip-xlm-roberta-large-vit-huge-14_visual_fp16.safetensors"
+
+# Create CLIP vision directory and download models
+mkdir -p "$CLIP_VISION_DIR"
+download_model "$CLIP_VISION_DIR" "clip_vision_h.safetensors" \
+  "Comfy-Org/Wan_2.1_ComfyUI_repackaged" "split_files/clip_vision/clip_vision_h.safetensors"
+
+# Download VAE
+echo "Downloading VAE..."
+download_model "$VAE_DIR" "Wan2_1_VAE_bf16.safetensors" \
+  "Kijai/WanVideo_comfy" "Wan2_1_VAE_bf16.safetensors"
+
+download_model "$VAE_DIR" "wan_2.1_vae.safetensors" \
+  "Comfy-Org/Wan_2.1_ComfyUI_repackaged" "split_files/vae/wan_2.1_vae.safetensors"
 
 # Download upscale model
 echo "Downloading upscale models"
@@ -153,10 +159,6 @@ mkdir -p "$NETWORK_VOLUME/ComfyUI/models/upscale_models"
 if [ ! -f "$NETWORK_VOLUME/ComfyUI/models/upscale_models/4x_foolhardy_Remacri.pt" ]; then
     wget -O "$NETWORK_VOLUME/ComfyUI/models/upscale_models/4x_foolhardy_Remacri.pt" \
     https://huggingface.co/FacehugmanIII/4x_foolhardy_Remacri/resolve/main/4x_foolhardy_Remacri.pth
-fi
-if [ ! -f "$NETWORK_VOLUME/ComfyUI/models/upscale_models/OmniSR_X2_DIV2K.safetensors" ]; then
-    wget -O "$NETWORK_VOLUME/ComfyUI/models/upscale_models/OmniSR_X2_DIV2K.safetensors" \
-    https://huggingface.co/Acly/Omni-SR/resolve/main/OmniSR_X2_DIV2K.safetensors
 fi
 if [ ! -f "$NETWORK_VOLUME/ComfyUI/models/upscale_models/4xLSDIR.pth" ]; then
     if [ -f "/4xLSDIR.pth" ]; then
