@@ -66,8 +66,6 @@ if [ "$download_quantized_model" == "true" ]; then
 fi
 if [ "$download_480p_hugging_face" == "true" ]; then
   mkdir -p "$NETWORK_VOLUME/ComfyUI/models/diffusion_models"
-
-  # Define Hugging Face model repository
   HF_REPO="Comfy-Org/Wan_2.1_ComfyUI_repackaged"
   DEST_DIR="$NETWORK_VOLUME/ComfyUI/models/diffusion_models"
 
