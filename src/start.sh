@@ -44,6 +44,7 @@ git clone "https://github.com/Hearmeman24/CivitAI_Downloader.git" || { echo "Git
 mv CivitAI_Downloader/download.py "/usr/local/bin/" || { echo "Move failed"; exit 1; }
 chmod +x "/usr/local/bin/download.py" || { echo "Chmod failed"; exit 1; }
 rm -rf CivitAI_Downloader  # Clean up the cloned repo
+pip install huggingface_hub
 
 # Change to the directory
 cd "$CUSTOM_NODES_DIR" || exit 1
@@ -62,6 +63,30 @@ if [ "$download_quantized_model" == "true" ]; then
       wget -c -O "$NETWORK_VOLUME/ComfyUI/models/diffusion_models/wan2.1_t2v_1.3B_fp16.safetensors" \
       https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/main/split_files/diffusion_models/wan2.1_t2v_1.3B_fp16.safetensors
   fi
+fi
+if [ "$download_480p_hugging_face" == "true" ]; then
+  mkdir -p "$NETWORK_VOLUME/ComfyUI/models/diffusion_models"
+
+  # Define Hugging Face model repository
+  HF_REPO="Comfy-Org/Wan_2.1_ComfyUI_repackaged"
+  DEST_DIR="$NETWORK_VOLUME/ComfyUI/models/diffusion_models"
+
+  # List of model files to download
+  MODEL_FILES=(
+    "split_files/diffusion_models/wan2.1_i2v_480p_14B_bf16.safetensors"
+    "split_files/diffusion_models/wan2.1_t2v_14B_bf16.safetensors"
+    "split_files/diffusion_models/wan2.1_t2v_1.3B_fp16.safetensors"
+  )
+
+  # Download each file if it doesn't exist
+  for MODEL_FILE in "${MODEL_FILES[@]}"; do
+    if [ ! -f "$DEST_DIR/$(basename $MODEL_FILE)" ]; then
+      echo "Downloading: $MODEL_FILE"
+      huggingface-cli download "$HF_REPO" "$MODEL_FILE" --local-dir "$DEST_DIR" --resume-download
+    else
+      echo "File already exists: $(basename $MODEL_FILE), skipping..."
+    fi
+  done
 fi
 if [ "$download_480p_native_models" == "true" ]; then
   mkdir -p "$NETWORK_VOLUME/ComfyUI/models/diffusion_models"
