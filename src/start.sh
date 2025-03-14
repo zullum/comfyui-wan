@@ -198,7 +198,7 @@ mkdir -p "$WORKFLOW_DIR"
 # Ensure the file exists in the current directory before moving it
 cd /
 
-WORKFLOWS=("Wan_Video_Image2Video-Upscaling_FrameInterpolation.json" "Wan_Video_Text2Video-Upscaling_FrameInterpolation.json" "Wan_Video_Video2Video-Upscaling_FrameInterpolation.json" "Native_ComfyUI_Wan_Video_Image2Video-Upscaling_FrameInterpolation.json" "Native_ComfyUIWan_Video_Text2Video-Upscaling_FrameInterpolation.json")
+WORKFLOWS=("Wan_Video_Image2Video-Upscaling_FrameInterpolation.json" "Wan_Video_Text2Video-Upscaling_FrameInterpolation.json" "Wan_Video_Video2Video-Upscaling_FrameInterpolation.json" "Native_ComfyUI_Wan_Video_Image2Video-Upscaling_FrameInterpolation.json" "Native_ComfyUIWan_Video_Text2Video-Upscaling_FrameInterpolation.json" "VidExtend_Native_ComfyUI_WanVideo_I2V_Upscaling_FrameInterpolation.json")
 
 for WORKFLOW in "${WORKFLOWS[@]}"; do
     if [ -f "./$WORKFLOW" ]; then
