@@ -291,9 +291,17 @@ else
     cd ComfyUI-WanVideoWrapper
     git pull
 fi
+if [ ! -d "ComfyUI-KJNodes" ]; then
+    git clone https://github.com/kijai/ComfyUI-KJNodes.git
+else
+    cd ComfyUI-KJNodes
+    git pull
+fi
 
 # Install dependencies
 pip install --no-cache-dir -r $NETWORK_VOLUME/ComfyUI/custom_nodes/ComfyUI-WanVideoWrapper/requirements.txt
+pip install --no-cache-dir -r $NETWORK_VOLUME/ComfyUI/custom_nodes/ComfyUI-KJNodes/requirements.txt
+
 # Start ComfyUI
 echo "Starting ComfyUI"
 if [ "$USE_SAGE_ATTENTION" = "false" ]; then
