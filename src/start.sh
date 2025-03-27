@@ -56,7 +56,7 @@ cd /
 fi
 if [ "$download_triton" == "true" ]; then
 echo "Downloading Triton"
-git clone git clone https://github.com/triton-lang/triton.git
+git clone https://github.com/triton-lang/triton.git
 cd triton
 pip install ninja cmake wheel pybind11
 pip install -e python
