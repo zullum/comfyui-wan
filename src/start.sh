@@ -56,11 +56,7 @@ cd /
 fi
 if [ "$download_triton" == "true" ]; then
 echo "Downloading Triton"
-git clone https://github.com/triton-lang/triton.git
-cd triton
-pip install ninja cmake wheel pybind11
-pip install -e python
-cd /
+pip install triton
 fi
 
 # Change to the directory
