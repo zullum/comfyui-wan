@@ -46,6 +46,23 @@ chmod +x "/usr/local/bin/download.py" || { echo "Chmod failed"; exit 1; }
 rm -rf CivitAI_Downloader  # Clean up the cloned repo
 pip install huggingface_hub
 
+
+if [ "$download_sage_attention" == "true" ]; then
+echo "Downloading SageAttention"
+git clone https://github.com/thu-ml/SageAttention.git
+cd SageAttention
+python3 setup.py install
+cd /
+fi
+if [ "$download_triton" == "true" ]; then
+echo "Downloading Triton"
+git clone git clone https://github.com/triton-lang/triton.git
+cd triton
+pip install ninja cmake wheel pybind11
+pip install -e python
+cd /
+fi
+
 # Change to the directory
 cd "$CUSTOM_NODES_DIR" || exit 1
 
