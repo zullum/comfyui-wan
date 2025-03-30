@@ -213,16 +213,24 @@ cd /
 
 WORKFLOWS=("Wan_Video_Image2Video-Upscaling_FrameInterpolation.json" "Wan_Video_Text2Video-Upscaling_FrameInterpolation.json" "Wan_Video_Video2Video-Upscaling_FrameInterpolation.json" "Native_ComfyUI_Wan_Video_Image2Video-Upscaling_FrameInterpolation.json" "Native_ComfyUIWan_Video_Text2Video-Upscaling_FrameInterpolation.json" "VidExtend_Native_ComfyUI_WanVideo_I2V_Upscaling_FrameInterpolation.json")
 
-for WORKFLOW in "${WORKFLOWS[@]}"; do
-    if [ -f "./$WORKFLOW" ]; then
-        if [ ! -f "$WORKFLOW_DIR/$WORKFLOW" ]; then
-            mv "./$WORKFLOW" "$WORKFLOW_DIR"
-            echo "$WORKFLOW copied."
-        else
-            echo "$WORKFLOW already exists in the target directory, skipping move."
-        fi
+SOURCE_DIR="/comfyui-wan/workflows"
+
+# Ensure destination directory exists
+mkdir -p "$WORKFLOW_DIR"
+
+# Loop over each file in the source directory
+for file in "$SOURCE_DIR"/*; do
+    # Skip if it's not a file
+    [[ -f "$file" ]] || continue
+
+    dest_file="$WORKFLOW_DIR/$(basename "$file")"
+
+    if [[ -e "$dest_file" ]]; then
+        echo "File already exists in destination. Deleting: $file"
+        rm -f "$file"
     else
-        echo "$WORKFLOW not found in the current directory."
+        echo "Moving: $file to $WORKFLOW_DIR"
+        mv "$file" "$WORKFLOW_DIR"
     fi
 done
 
