@@ -309,13 +309,15 @@ cd $NETWORK_VOLUME/ComfyUI/custom_nodes
 if [ ! -d "ComfyUI-WanVideoWrapper" ]; then
     git clone https://github.com/kijai/ComfyUI-WanVideoWrapper.git
 else
-    cd ComfyUI-WanVideoWrapper
+    echo "Updating WanVideoWrapper"
+    cd $NETWORK_VOLUME/ComfyUI/custom_nodes/ComfyUI-WanVideoWrapper
     git pull
 fi
 if [ ! -d "ComfyUI-KJNodes" ]; then
     git clone https://github.com/kijai/ComfyUI-KJNodes.git
 else
-    cd ComfyUI-KJNodes
+    echo "Updating KJ Nodes"
+    cd $NETWORK_VOLUME/ComfyUI/custom_nodes/ComfyUI-KJNodes
     git pull
 fi
 
