@@ -304,16 +304,16 @@ fi
 # Workspace as main working directory
 echo "cd $NETWORK_VOLUME" >> ~/.bashrc
 
-cd $NETWORK_VOLUME/ComfyUI/custom_nodes
-
-if [ ! -d "ComfyUI-WanVideoWrapper" ]; then
+if [ ! -d "$NETWORK_VOLUME/ComfyUI/custom_nodes/ComfyUI-WanVideoWrapper" ]; then
+    cd $NETWORK_VOLUME/ComfyUI/custom_nodes
     git clone https://github.com/kijai/ComfyUI-WanVideoWrapper.git
 else
     echo "Updating WanVideoWrapper"
     cd $NETWORK_VOLUME/ComfyUI/custom_nodes/ComfyUI-WanVideoWrapper
     git pull
 fi
-if [ ! -d "ComfyUI-KJNodes" ]; then
+if [ ! -d "$NETWORK_VOLUME/ComfyUI/custom_nodes/ComfyUI-KJNodes" ]; then
+    cd $NETWORK_VOLUME/ComfyUI/custom_nodes
     git clone https://github.com/kijai/ComfyUI-KJNodes.git
 else
     echo "Updating KJ Nodes"
