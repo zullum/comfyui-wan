@@ -130,12 +130,12 @@ if [ "$download_480p_native_models" == "true" ]; then
     "Comfy-Org/Wan_2.1_ComfyUI_repackaged" "split_files/diffusion_models/wan2.1_t2v_1.3B_fp16.safetensors"
 fi
 
-# Download 480p native models
-if [ "$download_vace_13b_preview" == "true" ]; then
-  echo "VACE Preview Model"
+# Download Wan Fun native models
+if [ "$download_wan_fun_model" == "true" ]; then
+  echo "Downloading Wan Fun 1.3B Model"
 
-  download_model "$DIFFUSION_MODELS_DIR" "wan2.1_1.3B_VACE_Preview.safetensors" \
-    "ali-vilab/VACE-Wan2.1-1.3B-Preview" "diffusion_pytorch_model.safetensors"
+  download_model "$DIFFUSION_MODELS_DIR" "Wan2.1-Fun-Control1.3B.safetensors" \
+    "alibaba-pai/Wan2.1-Fun-1.3B-Control" "diffusion_pytorch_model.safetensors"
 fi
 
 # Download 720p native models
