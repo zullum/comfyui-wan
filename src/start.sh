@@ -138,6 +138,13 @@ if [ "$download_wan_fun_model" == "true" ]; then
     "alibaba-pai/Wan2.1-Fun-1.3B-Control" "diffusion_pytorch_model.safetensors"
 fi
 
+if [ "$download_wan_fun_14b_model" == "true" ]; then
+  echo "Downloading Wan Fun 14B Model"
+
+  download_model "$DIFFUSION_MODELS_DIR" "Wan2.1-Fun-Control14B.safetensors" \
+    "alibaba-pai/Wan2.1-Fun-14B-Control" "diffusion_pytorch_model.safetensors"
+fi
+
 # Download 720p native models
 if [ "$download_720p_native_models" == "true" ]; then
   echo "Downloading 720p native models..."
