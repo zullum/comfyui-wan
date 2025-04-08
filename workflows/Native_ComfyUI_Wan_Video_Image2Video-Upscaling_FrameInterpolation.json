@@ -2,7 +2,7 @@
   "id": "be1c91d9-234f-40a3-bea0-c4fbf4c2ee46",
   "revision": 0,
   "last_node_id": 302,
-  "last_link_id": 661,
+  "last_link_id": 672,
   "nodes": [
     {
       "id": 222,
@@ -18,7 +18,7 @@
       "flags": {
         "collapsed": true
       },
-      "order": 48,
+      "order": 47,
       "mode": 0,
       "inputs": [
         {
@@ -72,7 +72,7 @@
       "flags": {
         "collapsed": false
       },
-      "order": 45,
+      "order": 44,
       "mode": 0,
       "inputs": [
         {
@@ -116,7 +116,7 @@
       "flags": {
         "collapsed": true
       },
-      "order": 38,
+      "order": 37,
       "mode": 0,
       "inputs": [
         {
@@ -157,7 +157,7 @@
         26
       ],
       "flags": {},
-      "order": 20,
+      "order": 19,
       "mode": 0,
       "inputs": [
         {
@@ -193,7 +193,7 @@
       "flags": {
         "collapsed": true
       },
-      "order": 42,
+      "order": 41,
       "mode": 0,
       "inputs": [
         {
@@ -234,7 +234,7 @@
       "flags": {
         "collapsed": true
       },
-      "order": 44,
+      "order": 43,
       "mode": 0,
       "inputs": [
         {
@@ -302,7 +302,7 @@
       "flags": {
         "collapsed": true
       },
-      "order": 28,
+      "order": 27,
       "mode": 0,
       "inputs": [
         {
@@ -342,7 +342,7 @@
         26
       ],
       "flags": {},
-      "order": 16,
+      "order": 15,
       "mode": 0,
       "inputs": [
         {
@@ -414,7 +414,7 @@
       "flags": {
         "collapsed": true
       },
-      "order": 17,
+      "order": 16,
       "mode": 0,
       "inputs": [
         {
@@ -484,7 +484,7 @@
         26
       ],
       "flags": {},
-      "order": 22,
+      "order": 21,
       "mode": 0,
       "inputs": [
         {
@@ -520,7 +520,7 @@
       "flags": {
         "collapsed": true
       },
-      "order": 21,
+      "order": 20,
       "mode": 0,
       "inputs": [
         {
@@ -603,7 +603,7 @@
         26
       ],
       "flags": {},
-      "order": 18,
+      "order": 17,
       "mode": 0,
       "inputs": [
         {
@@ -639,7 +639,7 @@
         26
       ],
       "flags": {},
-      "order": 23,
+      "order": 22,
       "mode": 0,
       "inputs": [
         {
@@ -675,7 +675,7 @@
         26
       ],
       "flags": {},
-      "order": 27,
+      "order": 26,
       "mode": 0,
       "inputs": [
         {
@@ -714,7 +714,7 @@
       "flags": {
         "collapsed": true
       },
-      "order": 51,
+      "order": 50,
       "mode": 0,
       "inputs": [
         {
@@ -776,7 +776,7 @@
       "flags": {
         "collapsed": true
       },
-      "order": 50,
+      "order": 49,
       "mode": 0,
       "inputs": [
         {
@@ -836,7 +836,7 @@
         26
       ],
       "flags": {},
-      "order": 43,
+      "order": 42,
       "mode": 0,
       "inputs": [
         {
@@ -895,10 +895,10 @@
       ],
       "size": [
         214.7587890625,
-        685.5819091796875
+        334
       ],
       "flags": {},
-      "order": 46,
+      "order": 45,
       "mode": 0,
       "inputs": [
         {
@@ -989,29 +989,6 @@
       "bgcolor": "#653"
     },
     {
-      "id": 291,
-      "type": "Note",
-      "pos": [
-        182.8372039794922,
-        -218.00872802734375
-      ],
-      "size": [
-        359.9325866699219,
-        131.6820526123047
-      ],
-      "flags": {},
-      "order": 6,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [],
-      "properties": {},
-      "widgets_values": [
-        "If your machine is capable, try switching the RED nodes. using the VAE Decode node will assist in removing color glitching. \nSimply connect the latent output from the KSampler to the samples input of the VAE decode node. \nThen, connect the image output from the VAE Decode node to the ImagePass node"
-      ],
-      "color": "#432",
-      "bgcolor": "#653"
-    },
-    {
       "id": 161,
       "type": "Note",
       "pos": [
@@ -1023,7 +1000,7 @@
         88
       ],
       "flags": {},
-      "order": 7,
+      "order": 6,
       "mode": 0,
       "inputs": [],
       "outputs": [],
@@ -1046,7 +1023,7 @@
         26
       ],
       "flags": {},
-      "order": 41,
+      "order": 40,
       "mode": 0,
       "inputs": [
         {
@@ -1087,7 +1064,7 @@
         88
       ],
       "flags": {},
-      "order": 8,
+      "order": 7,
       "mode": 0,
       "inputs": [],
       "outputs": [],
@@ -1110,7 +1087,7 @@
         46
       ],
       "flags": {},
-      "order": 40,
+      "order": 39,
       "mode": 0,
       "inputs": [
         {
@@ -1155,7 +1132,7 @@
         58
       ],
       "flags": {},
-      "order": 37,
+      "order": 36,
       "mode": 0,
       "inputs": [
         {
@@ -1198,7 +1175,7 @@
         77.33492279052734
       ],
       "flags": {},
-      "order": 29,
+      "order": 28,
       "mode": 0,
       "inputs": [
         {
@@ -1244,7 +1221,7 @@
         82
       ],
       "flags": {},
-      "order": 9,
+      "order": 8,
       "mode": 0,
       "inputs": [],
       "outputs": [
@@ -1281,7 +1258,7 @@
         200
       ],
       "flags": {},
-      "order": 35,
+      "order": 34,
       "mode": 0,
       "inputs": [
         {
@@ -1323,7 +1300,7 @@
         82
       ],
       "flags": {},
-      "order": 31,
+      "order": 30,
       "mode": 0,
       "inputs": [
         {
@@ -1369,7 +1346,7 @@
         61.931095123291016
       ],
       "flags": {},
-      "order": 10,
+      "order": 9,
       "mode": 0,
       "inputs": [],
       "outputs": [
@@ -1406,7 +1383,7 @@
         88
       ],
       "flags": {},
-      "order": 11,
+      "order": 10,
       "mode": 0,
       "inputs": [],
       "outputs": [],
@@ -1429,7 +1406,7 @@
         131.67318725585938
       ],
       "flags": {},
-      "order": 12,
+      "order": 11,
       "mode": 0,
       "inputs": [],
       "outputs": [],
@@ -1452,7 +1429,7 @@
         135.57254028320312
       ],
       "flags": {},
-      "order": 52,
+      "order": 51,
       "mode": 0,
       "inputs": [
         {
@@ -1498,7 +1475,7 @@
       "flags": {
         "collapsed": true
       },
-      "order": 49,
+      "order": 48,
       "mode": 0,
       "inputs": [
         {
@@ -1541,7 +1518,7 @@
       "flags": {
         "collapsed": true
       },
-      "order": 47,
+      "order": 46,
       "mode": 0,
       "inputs": [
         {
@@ -1577,10 +1554,10 @@
       ],
       "size": [
         214.7587890625,
-        685.5819091796875
+        334
       ],
       "flags": {},
-      "order": 53,
+      "order": 52,
       "mode": 0,
       "inputs": [
         {
@@ -1656,10 +1633,10 @@
       ],
       "size": [
         214.7587890625,
-        685.5819091796875
+        334
       ],
       "flags": {},
-      "order": 55,
+      "order": 54,
       "mode": 0,
       "inputs": [
         {
@@ -1738,7 +1715,7 @@
         170
       ],
       "flags": {},
-      "order": 54,
+      "order": 53,
       "mode": 0,
       "inputs": [
         {
@@ -1800,7 +1777,7 @@
       "flags": {
         "collapsed": false
       },
-      "order": 56,
+      "order": 55,
       "mode": 0,
       "inputs": [
         {
@@ -1849,10 +1826,10 @@
       ],
       "size": [
         214.7587890625,
-        685.5819091796875
+        334
       ],
       "flags": {},
-      "order": 57,
+      "order": 56,
       "mode": 0,
       "inputs": [
         {
@@ -1931,7 +1908,7 @@
         131.67318725585938
       ],
       "flags": {},
-      "order": 13,
+      "order": 12,
       "mode": 0,
       "inputs": [],
       "outputs": [],
@@ -1941,53 +1918,6 @@
       ],
       "color": "#432",
       "bgcolor": "#653"
-    },
-    {
-      "id": 300,
-      "type": "Fast Bypasser (rgthree)",
-      "pos": [
-        -1475.3758544921875,
-        268.49920654296875
-      ],
-      "size": [
-        354.3999938964844,
-        78
-      ],
-      "flags": {},
-      "order": 33,
-      "mode": 0,
-      "inputs": [
-        {
-          "dir": 3,
-          "label": " ",
-          "name": "Power Lora Loader (rgthree)",
-          "type": "*",
-          "link": 631
-        },
-        {
-          "dir": 3,
-          "label": " ",
-          "name": "",
-          "type": "*",
-          "link": null
-        }
-      ],
-      "outputs": [
-        {
-          "dir": 4,
-          "label": " ",
-          "name": "OPT_CONNECTION",
-          "type": "*",
-          "links": null
-        }
-      ],
-      "title": "LoRA Loader Toggle",
-      "properties": {
-        "toggleRestriction": "default",
-        "collapse_connections": true
-      },
-      "color": "#323",
-      "bgcolor": "#535"
     },
     {
       "id": 277,
@@ -2001,7 +1931,7 @@
         65.05310821533203
       ],
       "flags": {},
-      "order": 30,
+      "order": 29,
       "mode": 0,
       "inputs": [
         {
@@ -2048,7 +1978,7 @@
       "flags": {
         "collapsed": false
       },
-      "order": 34,
+      "order": 33,
       "mode": 0,
       "inputs": [
         {
@@ -2088,7 +2018,7 @@
         331.0753479003906
       ],
       "flags": {},
-      "order": 14,
+      "order": 13,
       "mode": 0,
       "inputs": [],
       "outputs": [
@@ -2114,8 +2044,7 @@
       },
       "widgets_values": [
         "ComfyUI_temp_ejmgb_00005_.png",
-        "image",
-        ""
+        "image"
       ]
     },
     {
@@ -2130,7 +2059,7 @@
         210
       ],
       "flags": {},
-      "order": 26,
+      "order": 25,
       "mode": 0,
       "inputs": [
         {
@@ -2214,7 +2143,7 @@
         787.3333129882812
       ],
       "flags": {},
-      "order": 39,
+      "order": 38,
       "mode": 0,
       "inputs": [
         {
@@ -2260,8 +2189,7 @@
         3.5,
         "uni_pc",
         "simple",
-        1,
-        ""
+        1
       ]
     },
     {
@@ -2276,7 +2204,7 @@
         106
       ],
       "flags": {},
-      "order": 19,
+      "order": 18,
       "mode": 4,
       "inputs": [
         {
@@ -2322,7 +2250,7 @@
         154
       ],
       "flags": {},
-      "order": 24,
+      "order": 23,
       "mode": 0,
       "inputs": [
         {
@@ -2368,7 +2296,7 @@
         77.33492279052734
       ],
       "flags": {},
-      "order": 25,
+      "order": 24,
       "mode": 0,
       "inputs": [
         {
@@ -2403,6 +2331,86 @@
       "bgcolor": "#535"
     },
     {
+      "id": 231,
+      "type": "CLIPLoader",
+      "pos": [
+        -2420.59716796875,
+        778.5750122070312
+      ],
+      "size": [
+        411.814208984375,
+        98
+      ],
+      "flags": {},
+      "order": 14,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "CLIP",
+          "type": "CLIP",
+          "slot_index": 0,
+          "links": [
+            516
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.16",
+        "Node name for S&R": "CLIPLoader"
+      },
+      "widgets_values": [
+        "umt5_xxl_fp8_e4m3fn_scaled.safetensors",
+        "wan",
+        "default"
+      ],
+      "color": "#223",
+      "bgcolor": "#335"
+    },
+    {
+      "id": 243,
+      "type": "CLIPTextEncode",
+      "pos": [
+        -968.8154296875,
+        240.2451629638672
+      ],
+      "size": [
+        400,
+        200
+      ],
+      "flags": {},
+      "order": 35,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 650
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "slot_index": 0,
+          "links": [
+            442
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.16",
+        "Node name for S&R": "CLIPTextEncode"
+      },
+      "widgets_values": [
+        "A video selfie showing a woman wearing round glasses, she has deep blue eyes and light brunette hair"
+      ],
+      "color": "#232",
+      "bgcolor": "#353"
+    },
+    {
       "id": 302,
       "type": "Power Lora Loader (rgthree)",
       "pos": [
@@ -2414,7 +2422,7 @@
         382
       ],
       "flags": {},
-      "order": 32,
+      "order": 31,
       "mode": 0,
       "inputs": [
         {
@@ -2461,7 +2469,7 @@
         "aux_id": "rgthree/rgthree-comfy"
       },
       "widgets_values": [
-        null,
+        "",
         {
           "type": "PowerLoraLoaderHeaderWidget"
         },
@@ -2526,96 +2534,63 @@
           "strengthTwo": null
         },
         {
-          "on": true,
+          "on": false,
           "lora": "epoch60.safetensors",
           "strength": 0.9,
           "strengthTwo": null
         },
-        null,
+        "",
         ""
       ],
       "color": "#223",
       "bgcolor": "#335"
     },
     {
-      "id": 231,
-      "type": "CLIPLoader",
+      "id": 300,
+      "type": "Fast Bypasser (rgthree)",
       "pos": [
-        -2420.59716796875,
-        778.5750122070312
+        -1483.51611328125,
+        252.21868896484375
       ],
       "size": [
-        411.814208984375,
-        98
+        354.3999938964844,
+        78
       ],
       "flags": {},
-      "order": 15,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "CLIP",
-          "type": "CLIP",
-          "slot_index": 0,
-          "links": [
-            516
-          ]
-        }
-      ],
-      "properties": {
-        "cnr_id": "comfy-core",
-        "ver": "0.3.16",
-        "Node name for S&R": "CLIPLoader"
-      },
-      "widgets_values": [
-        "umt5_xxl_fp8_e4m3fn_scaled.safetensors",
-        "wan",
-        "default"
-      ],
-      "color": "#223",
-      "bgcolor": "#335"
-    },
-    {
-      "id": 243,
-      "type": "CLIPTextEncode",
-      "pos": [
-        -968.8154296875,
-        240.2451629638672
-      ],
-      "size": [
-        400,
-        200
-      ],
-      "flags": {},
-      "order": 36,
+      "order": 32,
       "mode": 0,
       "inputs": [
         {
-          "name": "clip",
-          "type": "CLIP",
-          "link": 650
+          "dir": 3,
+          "label": " ",
+          "name": "Power Lora Loader (rgthree)",
+          "type": "*",
+          "link": 631
+        },
+        {
+          "dir": 3,
+          "label": " ",
+          "name": "",
+          "type": "*",
+          "link": null
         }
       ],
       "outputs": [
         {
-          "name": "CONDITIONING",
-          "type": "CONDITIONING",
-          "slot_index": 0,
-          "links": [
-            442
-          ]
+          "dir": 4,
+          "label": " ",
+          "name": "OPT_CONNECTION",
+          "type": "*",
+          "links": null
         }
       ],
+      "title": "LoRA Loader Toggle",
       "properties": {
-        "cnr_id": "comfy-core",
-        "ver": "0.3.16",
-        "Node name for S&R": "CLIPTextEncode"
+        "toggleRestriction": "default",
+        "collapse_connections": true
       },
-      "widgets_values": [
-        "A video selfie showing a woman wearing round glasses, she has deep blue eyes and light brunette hair"
-      ],
-      "color": "#232",
-      "bgcolor": "#353"
+      "color": "#323",
+      "bgcolor": "#535"
     }
   ],
   "links": [
@@ -3970,6 +3945,94 @@
       302,
       1,
       "CLIP"
+    ],
+    [
+      662,
+      233,
+      0,
+      239,
+      0,
+      "CLIP_VISION"
+    ],
+    [
+      663,
+      232,
+      0,
+      80,
+      3,
+      "VAE"
+    ],
+    [
+      664,
+      232,
+      0,
+      290,
+      1,
+      "VAE"
+    ],
+    [
+      665,
+      154,
+      0,
+      99,
+      0,
+      "UPSCALE_MODEL"
+    ],
+    [
+      666,
+      232,
+      0,
+      97,
+      3,
+      "VAE"
+    ],
+    [
+      667,
+      232,
+      0,
+      95,
+      3,
+      "VAE"
+    ],
+    [
+      668,
+      232,
+      0,
+      94,
+      3,
+      "VAE"
+    ],
+    [
+      669,
+      243,
+      0,
+      236,
+      0,
+      "CONDITIONING"
+    ],
+    [
+      670,
+      244,
+      0,
+      236,
+      1,
+      "CONDITIONING"
+    ],
+    [
+      671,
+      232,
+      0,
+      236,
+      2,
+      "VAE"
+    ],
+    [
+      672,
+      231,
+      0,
+      302,
+      1,
+      "CLIP"
     ]
   ],
   "groups": [
@@ -4055,10 +4118,10 @@
   "config": {},
   "extra": {
     "ds": {
-      "scale": 2.1762913579015786,
+      "scale": 0.6934334949441625,
       "offset": [
-        1381.5517811685827,
-        -140.06064639144319
+        2880.1350625999735,
+        375.953254579549
       ]
     },
     "groupNodes": {},

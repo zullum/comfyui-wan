@@ -1,8 +1,8 @@
 {
   "id": "71b30c3c-19bb-42be-b9ec-23e1a1e6e9ba",
   "revision": 0,
-  "last_node_id": 387,
-  "last_link_id": 1378,
+  "last_node_id": 388,
+  "last_link_id": 1390,
   "nodes": [
     {
       "id": 25,
@@ -18,7 +18,7 @@
       "flags": {
         "collapsed": true
       },
-      "order": 25,
+      "order": 24,
       "mode": 0,
       "inputs": [
         {
@@ -54,7 +54,7 @@
       "flags": {
         "collapsed": true
       },
-      "order": 16,
+      "order": 17,
       "mode": 0,
       "inputs": [
         {
@@ -150,7 +150,7 @@
       "flags": {
         "collapsed": true
       },
-      "order": 17,
+      "order": 18,
       "mode": 0,
       "inputs": [
         {
@@ -246,7 +246,7 @@
       "flags": {
         "collapsed": true
       },
-      "order": 18,
+      "order": 19,
       "mode": 0,
       "inputs": [
         {
@@ -320,7 +320,7 @@
       "flags": {
         "collapsed": true
       },
-      "order": 31,
+      "order": 32,
       "mode": 0,
       "inputs": [
         {
@@ -369,7 +369,7 @@
       "flags": {
         "collapsed": true
       },
-      "order": 30,
+      "order": 31,
       "mode": 0,
       "inputs": [
         {
@@ -411,7 +411,7 @@
       "flags": {
         "collapsed": true
       },
-      "order": 36,
+      "order": 37,
       "mode": 0,
       "inputs": [
         {
@@ -445,7 +445,7 @@
         190
       ],
       "flags": {},
-      "order": 21,
+      "order": 25,
       "mode": 0,
       "inputs": [
         {
@@ -532,7 +532,7 @@
       "flags": {
         "collapsed": true
       },
-      "order": 40,
+      "order": 38,
       "mode": 0,
       "inputs": [
         {
@@ -575,7 +575,7 @@
       "flags": {
         "collapsed": true
       },
-      "order": 19,
+      "order": 20,
       "mode": 0,
       "inputs": [
         {
@@ -668,7 +668,7 @@
       "flags": {
         "collapsed": true
       },
-      "order": 27,
+      "order": 28,
       "mode": 0,
       "inputs": [
         {
@@ -776,7 +776,7 @@
         186
       ],
       "flags": {},
-      "order": 33,
+      "order": 34,
       "mode": 0,
       "inputs": [
         {
@@ -850,7 +850,7 @@
         78
       ],
       "flags": {},
-      "order": 34,
+      "order": 33,
       "mode": 0,
       "inputs": [
         {
@@ -885,29 +885,6 @@
       "bgcolor": "#335"
     },
     {
-      "id": 384,
-      "type": "Note",
-      "pos": [
-        -483.6255187988281,
-        448.2409362792969
-      ],
-      "size": [
-        241.4407501220703,
-        88
-      ],
-      "flags": {},
-      "order": 4,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [],
-      "properties": {},
-      "widgets_values": [
-        "If you're using a NON union ControlNet, make sure the toggle below is DISABLED"
-      ],
-      "color": "#432",
-      "bgcolor": "#653"
-    },
-    {
       "id": 229,
       "type": "Text Prompt (JPS)",
       "pos": [
@@ -919,7 +896,7 @@
         201.77017211914062
       ],
       "flags": {},
-      "order": 5,
+      "order": 4,
       "mode": 0,
       "inputs": [],
       "outputs": [
@@ -960,7 +937,7 @@
       "flags": {
         "collapsed": true
       },
-      "order": 20,
+      "order": 21,
       "mode": 0,
       "inputs": [
         {
@@ -1004,7 +981,7 @@
         792.25
       ],
       "flags": {},
-      "order": 6,
+      "order": 5,
       "mode": 0,
       "inputs": [
         {
@@ -1044,69 +1021,16 @@
         "Node name for S&R": "KSampler"
       },
       "widgets_values": [
-        937842890200044,
+        948341175585043,
         "randomize",
         40,
         4,
         "dpmpp_2m_sde",
         "karras",
-        1,
-        ""
+        1
       ],
       "color": "#223",
       "bgcolor": "#335"
-    },
-    {
-      "id": 4,
-      "type": "CheckpointLoaderSimple",
-      "pos": [
-        -1629.922607421875,
-        322.3222351074219
-      ],
-      "size": [
-        412.4065856933594,
-        98
-      ],
-      "flags": {},
-      "order": 7,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "MODEL",
-          "type": "MODEL",
-          "slot_index": 0,
-          "links": [
-            1241
-          ]
-        },
-        {
-          "name": "CLIP",
-          "type": "CLIP",
-          "slot_index": 1,
-          "links": [
-            1243
-          ]
-        },
-        {
-          "name": "VAE",
-          "type": "VAE",
-          "slot_index": 2,
-          "links": [
-            688
-          ]
-        }
-      ],
-      "properties": {
-        "cnr_id": "comfy-core",
-        "ver": "0.3.18",
-        "Node name for S&R": "CheckpointLoaderSimple"
-      },
-      "widgets_values": [
-        "epicrealismXL_vxviLastfameRealism.safetensors"
-      ],
-      "color": "#332922",
-      "bgcolor": "#593930"
     },
     {
       "id": 386,
@@ -1122,7 +1046,7 @@
       "flags": {
         "collapsed": true
       },
-      "order": 24,
+      "order": 27,
       "mode": 0,
       "inputs": [
         {
@@ -1165,7 +1089,7 @@
       "flags": {
         "collapsed": true
       },
-      "order": 39,
+      "order": 41,
       "mode": 0,
       "inputs": [
         {
@@ -1220,7 +1144,7 @@
       "flags": {
         "collapsed": true
       },
-      "order": 32,
+      "order": 35,
       "mode": 0,
       "inputs": [
         {
@@ -1281,7 +1205,7 @@
       "flags": {
         "collapsed": true
       },
-      "order": 42,
+      "order": 43,
       "mode": 0,
       "inputs": [
         {
@@ -1317,7 +1241,7 @@
       "flags": {
         "collapsed": true
       },
-      "order": 37,
+      "order": 39,
       "mode": 0,
       "inputs": [
         {
@@ -1357,7 +1281,7 @@
       "flags": {
         "collapsed": true
       },
-      "order": 38,
+      "order": 40,
       "mode": 0,
       "inputs": [
         {
@@ -1397,7 +1321,7 @@
       "flags": {
         "collapsed": false
       },
-      "order": 8,
+      "order": 6,
       "mode": 0,
       "inputs": [],
       "outputs": [
@@ -1419,7 +1343,7 @@
         "aux_id": "chrisgoringe/cg-use-everywhere"
       },
       "widgets_values": [
-        37682372549457,
+        857154574840288,
         "randomize"
       ],
       "color": "#223",
@@ -1437,7 +1361,7 @@
         186.34710693359375
       ],
       "flags": {},
-      "order": 9,
+      "order": 7,
       "mode": 0,
       "inputs": [
         {
@@ -1469,48 +1393,6 @@
       "bgcolor": "#533"
     },
     {
-      "id": 377,
-      "type": "LoadImage",
-      "pos": [
-        -839.3931884765625,
-        218.06044006347656
-      ],
-      "size": [
-        315,
-        314
-      ],
-      "flags": {},
-      "order": 10,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "IMAGE",
-          "type": "IMAGE",
-          "slot_index": 0,
-          "links": [
-            1360
-          ]
-        },
-        {
-          "name": "MASK",
-          "type": "MASK",
-          "links": null
-        }
-      ],
-      "title": "Load ControlNet Image",
-      "properties": {
-        "cnr_id": "comfy-core",
-        "ver": "0.3.26",
-        "Node name for S&R": "LoadImage"
-      },
-      "widgets_values": [
-        "ComfyUI_temp_xyuxv_00003_.png",
-        "image",
-        ""
-      ]
-    },
-    {
       "id": 24,
       "type": "Upscale Model Loader",
       "pos": [
@@ -1522,7 +1404,7 @@
         78
       ],
       "flags": {},
-      "order": 11,
+      "order": 8,
       "mode": 0,
       "inputs": [],
       "outputs": [
@@ -1553,44 +1435,6 @@
       "bgcolor": "#593930"
     },
     {
-      "id": 180,
-      "type": "ControlNetLoader",
-      "pos": [
-        -1616.271240234375,
-        713.1661987304688
-      ],
-      "size": [
-        315,
-        58
-      ],
-      "flags": {
-        "collapsed": false
-      },
-      "order": 12,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "CONTROL_NET",
-          "type": "CONTROL_NET",
-          "slot_index": 0,
-          "links": [
-            1341
-          ]
-        }
-      ],
-      "properties": {
-        "cnr_id": "comfy-core",
-        "ver": "0.3.18",
-        "Node name for S&R": "ControlNetLoader"
-      },
-      "widgets_values": [
-        "SDXL/controlnet-union-sdxl-1.0/diffusion_pytorch_model_promax.safetensors"
-      ],
-      "color": "#323",
-      "bgcolor": "#535"
-    },
-    {
       "id": 366,
       "type": "PreviewImage",
       "pos": [
@@ -1602,7 +1446,7 @@
         695.822998046875
       ],
       "flags": {},
-      "order": 41,
+      "order": 42,
       "mode": 0,
       "inputs": [
         {
@@ -1631,7 +1475,7 @@
         88
       ],
       "flags": {},
-      "order": 13,
+      "order": 9,
       "mode": 0,
       "inputs": [],
       "outputs": [],
@@ -1654,7 +1498,7 @@
         753.8056030273438
       ],
       "flags": {},
-      "order": 29,
+      "order": 30,
       "mode": 0,
       "inputs": [
         {
@@ -1685,7 +1529,7 @@
         1155.4957275390625
       ],
       "flags": {},
-      "order": 28,
+      "order": 29,
       "mode": 0,
       "inputs": [
         {
@@ -1753,7 +1597,7 @@
       },
       "widgets_values": [
         1.5,
-        353766503107432,
+        584984285034155,
         "randomize",
         20,
         3.5,
@@ -1771,8 +1615,7 @@
         8,
         16,
         true,
-        false,
-        ""
+        false
       ],
       "color": "#323",
       "bgcolor": "#535"
@@ -1791,7 +1634,7 @@
       "flags": {
         "collapsed": true
       },
-      "order": 35,
+      "order": 36,
       "mode": 0,
       "inputs": [
         {
@@ -1865,7 +1708,7 @@
       "flags": {
         "collapsed": true
       },
-      "order": 14,
+      "order": 10,
       "mode": 0,
       "inputs": [],
       "outputs": [
@@ -1900,7 +1743,7 @@
       "flags": {
         "collapsed": true
       },
-      "order": 15,
+      "order": 11,
       "mode": 0,
       "inputs": [],
       "outputs": [
@@ -1920,6 +1763,138 @@
       ],
       "color": "#1b4669",
       "bgcolor": "#29699c"
+    },
+    {
+      "id": 4,
+      "type": "CheckpointLoaderSimple",
+      "pos": [
+        -1629.922607421875,
+        322.3222351074219
+      ],
+      "size": [
+        412.4065856933594,
+        98
+      ],
+      "flags": {},
+      "order": 12,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "slot_index": 0,
+          "links": [
+            1241
+          ]
+        },
+        {
+          "name": "CLIP",
+          "type": "CLIP",
+          "slot_index": 1,
+          "links": [
+            1243
+          ]
+        },
+        {
+          "name": "VAE",
+          "type": "VAE",
+          "slot_index": 2,
+          "links": [
+            688
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.18",
+        "Node name for S&R": "CheckpointLoaderSimple"
+      },
+      "widgets_values": [
+        "epicrealismXL_vxviLastfameRealism.safetensors"
+      ],
+      "color": "#332922",
+      "bgcolor": "#593930"
+    },
+    {
+      "id": 180,
+      "type": "ControlNetLoader",
+      "pos": [
+        -1616.271240234375,
+        713.1661987304688
+      ],
+      "size": [
+        315,
+        58
+      ],
+      "flags": {
+        "collapsed": false
+      },
+      "order": 13,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "CONTROL_NET",
+          "type": "CONTROL_NET",
+          "slot_index": 0,
+          "links": [
+            1341
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.18",
+        "Node name for S&R": "ControlNetLoader"
+      },
+      "widgets_values": [
+        "SDXL/controlnet-union-sdxl-1.0/diffusion_pytorch_model_promax.safetensors"
+      ],
+      "color": "#323",
+      "bgcolor": "#535"
+    },
+    {
+      "id": 377,
+      "type": "LoadImage",
+      "pos": [
+        -836.9143676757812,
+        219.7133331298828
+      ],
+      "size": [
+        315,
+        314
+      ],
+      "flags": {},
+      "order": 14,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "slot_index": 0,
+          "links": [
+            1360
+          ]
+        },
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": null
+        }
+      ],
+      "title": "Load ControlNet Image",
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.26",
+        "Node name for S&R": "LoadImage"
+      },
+      "widgets_values": [
+        "ComfyUI_temp_xqydz_00002_.png",
+        "image",
+        ""
+      ]
     },
     {
       "id": 382,
@@ -1960,10 +1935,56 @@
         "Node name for S&R": "SetUnionControlNetType"
       },
       "widgets_values": [
-        "auto"
+        "openpose"
       ],
       "color": "#223",
       "bgcolor": "#335"
+    },
+    {
+      "id": 384,
+      "type": "Note",
+      "pos": [
+        -483.6255187988281,
+        448.2409362792969
+      ],
+      "size": [
+        241.4407501220703,
+        88
+      ],
+      "flags": {},
+      "order": 15,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "properties": {},
+      "widgets_values": [
+        "If you're using a NON union ControlNet, make sure the toggle below is DISABLED"
+      ],
+      "color": "#432",
+      "bgcolor": "#653"
+    },
+    {
+      "id": 388,
+      "type": "Note",
+      "pos": [
+        -1283.802978515625,
+        696.4575805664062
+      ],
+      "size": [
+        361.755859375,
+        225.6101531982422
+      ],
+      "flags": {},
+      "order": 16,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "properties": {},
+      "widgets_values": [
+        "I recommend downloading specific control nets rather than using the union one, this can be done via the model manager or from hugging face.\n\nPose - OpenPoseXL2.safetensors (Search in model manager)\n\nDepth - control-lora-depth-rank256.safetensors (Search in model manager)\n\nLineart - mistoLine_fp16 (Download from HF)\n\nhttps://huggingface.co/TheMistoAI/MistoLine/blob/main/mistoLine_fp16.safetensors"
+      ],
+      "color": "#432",
+      "bgcolor": "#653"
     }
   ],
   "links": [
@@ -7782,6 +7803,102 @@
       243,
       5,
       "UPSCALE_MODEL"
+    ],
+    [
+      1379,
+      359,
+      1,
+      6,
+      0,
+      "CLIP"
+    ],
+    [
+      1380,
+      4,
+      2,
+      8,
+      1,
+      "VAE"
+    ],
+    [
+      1381,
+      17,
+      0,
+      3,
+      0,
+      "MODEL"
+    ],
+    [
+      1382,
+      376,
+      0,
+      3,
+      1,
+      "CONDITIONING"
+    ],
+    [
+      1383,
+      376,
+      1,
+      3,
+      2,
+      "CONDITIONING"
+    ],
+    [
+      1384,
+      5,
+      0,
+      3,
+      3,
+      "LATENT"
+    ],
+    [
+      1385,
+      359,
+      1,
+      7,
+      0,
+      "CLIP"
+    ],
+    [
+      1386,
+      17,
+      0,
+      243,
+      1,
+      "MODEL"
+    ],
+    [
+      1387,
+      376,
+      0,
+      243,
+      2,
+      "CONDITIONING"
+    ],
+    [
+      1388,
+      376,
+      1,
+      243,
+      3,
+      "CONDITIONING"
+    ],
+    [
+      1389,
+      4,
+      2,
+      243,
+      4,
+      "VAE"
+    ],
+    [
+      1390,
+      24,
+      0,
+      243,
+      5,
+      "UPSCALE_MODEL"
     ]
   ],
   "groups": [
@@ -7841,10 +7958,10 @@
   "config": {},
   "extra": {
     "ds": {
-      "scale": 0.9090909090909091,
+      "scale": 1.1000000000000012,
       "offset": [
-        1484.4263926104063,
-        -39.76710150956874
+        2345.761536925183,
+        -136.50080111525952
       ]
     },
     "node_versions": {

@@ -45,6 +45,8 @@ mv CivitAI_Downloader/download.py "/usr/local/bin/" || { echo "Move failed"; exi
 chmod +x "/usr/local/bin/download.py" || { echo "Chmod failed"; exit 1; }
 rm -rf CivitAI_Downloader  # Clean up the cloned repo
 pip install huggingface_hub
+pip install onnxruntime-gpu
+
 
 
 if [ "$enable_optimizations" == "true" ]; then
@@ -130,7 +132,7 @@ if [ "$download_480p_native_models" == "true" ]; then
 fi
 
 # Handle full download (with SDXL)
-if [ "$download_wan_fun_and_sdxl" == "true" ]; then
+if [ "$download_wan_fun_and_sdxl_helper" == "true" ]; then
   echo "Downloading Wan Fun 1.3B Model"
 
   download_model "$DIFFUSION_MODELS_DIR" "Wan2.1-Fun-Control1.3B.safetensors" \
@@ -144,21 +146,9 @@ if [ "$download_wan_fun_and_sdxl" == "true" ]; then
   UNION_DIR="$NETWORK_VOLUME/ComfyUI/models/controlnet/SDXL/controlnet-union-sdxl-1.0"
   mkdir -p "$UNION_DIR"
   if [ ! -f "$UNION_DIR/diffusion_pytorch_model_promax.safetensors" ]; then
-    wget -O "$UNION_DIR/diffusion_pytorch_model_promax.safetensors" \
-      https://huggingface.co/xinsir/controlnet-union-sdxl-1.0/resolve/main/diffusion_pytorch_model_promax.safetensors
+    download_model "$UNION_DIR" "diffusion_pytorch_model_promax.safetensors" \
+    "xinsir/controlnet-union-sdxl-1.0" "diffusion_pytorch_model_promax.safetensors"
   fi
-
-# Handle download without SDXL, only if the full version wasn't triggered
-elif [ "$download_wan_fun_without_sdxl" == "true" ]; then
-  echo "Downloading Wan Fun 1.3B Model"
-
-  download_model "$DIFFUSION_MODELS_DIR" "Wan2.1-Fun-Control1.3B.safetensors" \
-    "alibaba-pai/Wan2.1-Fun-1.3B-Control" "diffusion_pytorch_model.safetensors"
-
-  echo "Downloading Wan Fun 14B Model"
-
-  download_model "$DIFFUSION_MODELS_DIR" "Wan2.1-Fun-Control14B.safetensors" \
-    "alibaba-pai/Wan2.1-Fun-14B-Control" "diffusion_pytorch_model.safetensors"
 fi
 
 # Download 720p native models
