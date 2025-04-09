@@ -45,18 +45,19 @@ mv CivitAI_Downloader/download.py "/usr/local/bin/" || { echo "Move failed"; exi
 chmod +x "/usr/local/bin/download.py" || { echo "Chmod failed"; exit 1; }
 rm -rf CivitAI_Downloader  # Clean up the cloned repo
 pip install huggingface_hub
+pip install onnxruntime-gpu
 
 
-if [ "$download_sage_attention" == "true" ]; then
+
+if [ "$enable_optimizations" == "true" ]; then
 echo "Downloading SageAttention"
 git clone https://github.com/thu-ml/SageAttention.git
 cd SageAttention
 python3 setup.py install
 cd /
-fi
-if [ "$download_triton" == "true" ]; then
 echo "Downloading Triton"
 pip install triton
+export change_preview_method="true"
 fi
 
 # Change to the directory
@@ -130,19 +131,24 @@ if [ "$download_480p_native_models" == "true" ]; then
     "Comfy-Org/Wan_2.1_ComfyUI_repackaged" "split_files/diffusion_models/wan2.1_t2v_1.3B_fp16.safetensors"
 fi
 
-# Download Wan Fun native models
-if [ "$download_wan_fun_model" == "true" ]; then
+# Handle full download (with SDXL)
+if [ "$download_wan_fun_and_sdxl_helper" == "true" ]; then
   echo "Downloading Wan Fun 1.3B Model"
 
   download_model "$DIFFUSION_MODELS_DIR" "Wan2.1-Fun-Control1.3B.safetensors" \
     "alibaba-pai/Wan2.1-Fun-1.3B-Control" "diffusion_pytorch_model.safetensors"
-fi
 
-if [ "$download_wan_fun_14b_model" == "true" ]; then
   echo "Downloading Wan Fun 14B Model"
 
   download_model "$DIFFUSION_MODELS_DIR" "Wan2.1-Fun-Control14B.safetensors" \
     "alibaba-pai/Wan2.1-Fun-14B-Control" "diffusion_pytorch_model.safetensors"
+
+  UNION_DIR="$NETWORK_VOLUME/ComfyUI/models/controlnet/SDXL/controlnet-union-sdxl-1.0"
+  mkdir -p "$UNION_DIR"
+  if [ ! -f "$UNION_DIR/diffusion_pytorch_model_promax.safetensors" ]; then
+    download_model "$UNION_DIR" "diffusion_pytorch_model_promax.safetensors" \
+    "xinsir/controlnet-union-sdxl-1.0" "diffusion_pytorch_model_promax.safetensors"
+  fi
 fi
 
 # Download 720p native models
@@ -260,7 +266,7 @@ for TARGET_DIR in "${!MODEL_CATEGORIES[@]}"; do
     MODEL_IDS_STRING="${!ENV_VAR_NAME}"  # Get the value of the environment variable
 
     # Skip if the environment variable is set to "ids_here"
-    if [ "$MODEL_IDS_STRING" == "ids_here" ]; then
+    if [ "$MODEL_IDS_STRING" == "replace_with_ids" ]; then
         echo "Skipping downloads for $TARGET_DIR ($ENV_VAR_NAME is 'ids_here')"
         continue
     fi
@@ -342,7 +348,7 @@ pip install --no-cache-dir -r $NETWORK_VOLUME/ComfyUI/custom_nodes/ComfyUI-KJNod
 
 # Start ComfyUI
 echo "Starting ComfyUI"
-if [ "$USE_SAGE_ATTENTION" = "false" ]; then
+if [ "$enable_optimizations" = "false" ]; then
     python3 "$NETWORK_VOLUME/ComfyUI/main.py" --listen
 else
     python3 "$NETWORK_VOLUME/ComfyUI/main.py" --listen --use-sage-attention
