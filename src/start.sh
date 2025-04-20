@@ -152,6 +152,11 @@ if [ "$download_wan_fun_and_sdxl_helper" == "true" ]; then
 fi
 
 if [ "$download_vace" == "true" ]; then
+  echo "Downloading Wan 1.3B"
+
+  download_model "$DIFFUSION_MODELS_DIR" "wan2.1_t2v_1.3B_fp16.safetensors" \
+    "Comfy-Org/Wan_2.1_ComfyUI_repackaged" "split_files/diffusion_models/wan2.1_t2v_1.3B_fp16.safetensors"
+
   echo "Downloading VACE 1.3B Model"
 
   download_model "$DIFFUSION_MODELS_DIR" "Wan2_1_VACE_1_3B_preview_bf16.safetensors" \
