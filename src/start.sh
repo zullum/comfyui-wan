@@ -151,6 +151,18 @@ if [ "$download_wan_fun_and_sdxl_helper" == "true" ]; then
   fi
 fi
 
+if [ "$download_vace" == "true" ]; then
+  echo "Downloading VACE 1.3B Model"
+
+  download_model "$DIFFUSION_MODELS_DIR" "Wan2_1_VACE_1_3B_preview_bf16.safetensors" \
+    "Kijai/WanVideo_comfy" "Wan2_1_VACE_1_3B_preview_bf16.safetensors"
+
+  echo "Downloading VACE text encoder"
+
+  download_model "$TEXT_ENCODERS_DIR" "umt5-xxl-enc-bf16.safetensors" \
+    "Kijai/WanVideo_comfy" "umt5-xxl-enc-bf16.safetensors"
+fi
+
 # Download 720p native models
 if [ "$download_720p_native_models" == "true" ]; then
   echo "Downloading 720p native models..."
