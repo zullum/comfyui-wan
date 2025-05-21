@@ -2,3 +2,4 @@
 assets/*
 test_resources/*
 tests/*
+.env
