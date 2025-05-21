@@ -218,10 +218,6 @@ download_model "$VAE_DIR" "wan_2.1_vae.safetensors" \
 # Download upscale model
 echo "Downloading upscale models"
 mkdir -p "$NETWORK_VOLUME/ComfyUI/models/upscale_models"
-if [ ! -f "$NETWORK_VOLUME/ComfyUI/models/upscale_models/4x_foolhardy_Remacri.pt" ]; then
-    wget -O "$NETWORK_VOLUME/ComfyUI/models/upscale_models/4x_foolhardy_Remacri.pt" \
-    https://huggingface.co/FacehugmanIII/4x_foolhardy_Remacri/resolve/main/4x_foolhardy_Remacri.pth
-fi
 if [ ! -f "$NETWORK_VOLUME/ComfyUI/models/upscale_models/4xLSDIR.pth" ]; then
     if [ -f "/4xLSDIR.pth" ]; then
         mv "/4xLSDIR.pth" "$NETWORK_VOLUME/ComfyUI/models/upscale_models/4xLSDIR.pth"
@@ -248,8 +244,6 @@ mkdir -p "$WORKFLOW_DIR"
 
 # Ensure the file exists in the current directory before moving it
 cd /
-
-WORKFLOWS=("Wan_Video_Image2Video-Upscaling_FrameInterpolation.json" "Wan_Video_Text2Video-Upscaling_FrameInterpolation.json" "Wan_Video_Video2Video-Upscaling_FrameInterpolation.json" "Native_ComfyUI_Wan_Video_Image2Video-Upscaling_FrameInterpolation.json" "Native_ComfyUIWan_Video_Text2Video-Upscaling_FrameInterpolation.json" "VidExtend_Native_ComfyUI_WanVideo_I2V_Upscaling_FrameInterpolation.json")
 
 SOURCE_DIR="/comfyui-wan/workflows"
 
