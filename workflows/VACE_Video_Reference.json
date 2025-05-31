@@ -2941,7 +2941,7 @@
         "cnr_id": "ComfyUI-WanVideoWrapper"
       },
       "widgets_values": [
-        "wan2.1_t2v_1.3B_fp16.safetensors",
+        "wan2.1_t2v_1.3B_bf16.safetensors",
         "bf16",
         "disabled",
         "offload_device",
