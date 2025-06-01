@@ -346,7 +346,7 @@ echo "▶️  Starting ComfyUI"
 if [ "$enable_optimizations" = "false" ]; then
     python3 "$NETWORK_VOLUME/ComfyUI/main.py" --listen
 else
-    nohup bash -c "python3 \"$NETWORK_VOLUME\"/ComfyUI/main.py --listen --use-sage-attention 2>&1 | tee \"$NETWORK_VOLUME\"/comfyui_\"$RUNPOD_POD_ID\"_nohup.log" &
+    nohup python3 "$NETWORK_VOLUME/ComfyUI/main.py" --listen --use-sage-attention > "$NETWORK_VOLUME/comfyui_${RUNPOD_POD_ID}_nohup.log" 2>&1 &
     # python3 "$NETWORK_VOLUME/ComfyUI/main.py" --listen --use-sage-attention
     until curl --silent --fail "$URL" --output /dev/null; do
       echo "🔄  ComfyUI Starting Up... You can view the startup logs here: $NETWORK_VOLUME/comfyui_${RUNPOD_POD_ID}_nohup.log"
