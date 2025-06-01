@@ -136,6 +136,11 @@ if [ "$download_480p_native_models" == "true" ]; then
   download_model "https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/main/split_files/diffusion_models/wan2.1_t2v_1.3B_bf16.safetensors" "$DIFFUSION_MODELS_DIR/wan2.1_t2v_1.3B_bf16.safetensors"
 fi
 
+if [ "$debug_models" == "true" ]; then
+  echo "Downloading 480p native models..."
+  download_model "https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/main/split_files/diffusion_models/wan2.1_i2v_480p_14B_fp16.safetensors" "$DIFFUSION_MODELS_DIR/wan2.1_i2v_480p_14B_fp16.safetensors"
+fi
+
 # Handle full download (with SDXL)
 if [ "$download_wan_fun_and_sdxl_helper" == "true" ]; then
   echo "Downloading Wan Fun 14B Model"
