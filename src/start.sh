@@ -192,14 +192,14 @@ download_model "https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/reso
 
 # Keep checking until no aria2c processes are running
 while pgrep -x "aria2c" > /dev/null; do
-    echo "Downloads still in progress..."
+    echo "🔽 Downloads still in progress..."
     sleep 5  # Check every 5 seconds
 done
 
 # poll every 5 s until the PID is gone
   while kill -0 "$BUILD_PID" 2>/dev/null; do
     echo "🛠️ Building SageAttention in progress... (this can take around 5 minutes)"
-    sleep 5
+    sleep 10
   done
 
   echo "Build complete"
@@ -353,4 +353,5 @@ else
       sleep 2
     done
     echo "🚀 ComfyUI is UP"
+    sleep infinity
 fi
