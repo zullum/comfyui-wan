@@ -198,7 +198,7 @@ done
 
 # poll every 5 s until the PID is gone
   while kill -0 "$BUILD_PID" 2>/dev/null; do
-    echo "🛠️ Building SageAttention in progress..."
+    echo "🛠️ Building SageAttention in progress... (this can take around 5 minutes)"
     sleep 5
   done
 
