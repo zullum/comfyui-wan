@@ -113,7 +113,7 @@ download_model() {
     echo "Downloading $destination_file to $destination_dir..."
 
     # Download using aria2c in background
-    aria2c -x 16 -s 16 -k 1M --file-allocation=falloc -d "$destination_dir" -o "$destination_file" "$url" &
+    aria2c -x 16 -s 16 -k 1M -d "$destination_dir" -o "$destination_file" "$url" &
 
     echo "Download started in background for $destination_file"
   else
