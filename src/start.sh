@@ -15,6 +15,7 @@ fi
 
 # Set the network volume path
 NETWORK_VOLUME="/workspace"
+URL="http://127.0.0.1:8188"
 
 # Check if NETWORK_VOLUME exists; if not, use root directory instead
 if [ ! -d "$NETWORK_VOLUME" ]; then
@@ -45,6 +46,32 @@ mv CivitAI_Downloader/download.py "/usr/local/bin/" || { echo "Move failed"; exi
 chmod +x "/usr/local/bin/download.py" || { echo "Chmod failed"; exit 1; }
 rm -rf CivitAI_Downloader  # Clean up the cloned repo
 pip install onnxruntime-gpu &
+
+if [ ! -d "$NETWORK_VOLUME/ComfyUI/custom_nodes/ComfyUI-WanVideoWrapper" ]; then
+    cd $NETWORK_VOLUME/ComfyUI/custom_nodes
+    git clone https://github.com/kijai/ComfyUI-WanVideoWrapper.git
+else
+    echo "Updating WanVideoWrapper"
+    cd $NETWORK_VOLUME/ComfyUI/custom_nodes/ComfyUI-WanVideoWrapper
+    git pull
+fi
+if [ ! -d "$NETWORK_VOLUME/ComfyUI/custom_nodes/ComfyUI-KJNodes" ]; then
+    cd $NETWORK_VOLUME/ComfyUI/custom_nodes
+    git clone https://github.com/kijai/ComfyUI-KJNodes.git
+else
+    echo "Updating KJ Nodes"
+    cd $NETWORK_VOLUME/ComfyUI/custom_nodes/ComfyUI-KJNodes
+    git pull
+fi
+
+
+echo "🔧 Installing KJNodes packages..."
+pip install --no-cache-dir -r $NETWORK_VOLUME/ComfyUI/custom_nodes/ComfyUI-KJNodes/requirements.txt $
+KJ_PID=$!
+
+echo "🔧 Installing WanVideoWrapper packages..."
+pip install --no-cache-dir -r $NETWORK_VOLUME/ComfyUI/custom_nodes/ComfyUI-WanVideoWrapper/requirements.txt &
+WAN_PID=$!
 
 
 export change_preview_method="true"
@@ -171,6 +198,7 @@ done
 
 # poll every 5 s until the PID is gone
   while kill -0 "$BUILD_PID" 2>/dev/null; do
+    echo "🛠️ Building SageAttention in progress..."
     sleep 5
   done
 
@@ -292,35 +320,37 @@ fi
 # Workspace as main working directory
 echo "cd $NETWORK_VOLUME" >> ~/.bashrc
 
-if [ ! -d "$NETWORK_VOLUME/ComfyUI/custom_nodes/ComfyUI-WanVideoWrapper" ]; then
-    cd $NETWORK_VOLUME/ComfyUI/custom_nodes
-    git clone https://github.com/kijai/ComfyUI-WanVideoWrapper.git
-else
-    echo "Updating WanVideoWrapper"
-    cd $NETWORK_VOLUME/ComfyUI/custom_nodes/ComfyUI-WanVideoWrapper
-    git pull
-fi
-if [ ! -d "$NETWORK_VOLUME/ComfyUI/custom_nodes/ComfyUI-KJNodes" ]; then
-    cd $NETWORK_VOLUME/ComfyUI/custom_nodes
-    git clone https://github.com/kijai/ComfyUI-KJNodes.git
-else
-    echo "Updating KJ Nodes"
-    cd $NETWORK_VOLUME/ComfyUI/custom_nodes/ComfyUI-KJNodes
-    git pull
-fi
 
 # Install dependencies
-pip install --no-cache-dir -r $NETWORK_VOLUME/ComfyUI/custom_nodes/ComfyUI-WanVideoWrapper/requirements.txt
-pip install --no-cache-dir -r $NETWORK_VOLUME/ComfyUI/custom_nodes/ComfyUI-KJNodes/requirements.txt
+wait $KJ_PID
+  KJ_STATUS=$?
+
+wait $WAN_PID
+WAN_STATUS=$?
+echo "✅ KJNodes install complete"
+echo "✅ WanVideoWrapper install complete"
+
+# Check results
+if [ $KJ_STATUS -ne 0 ]; then
+  echo "❌ KJNodes install failed."
+  exit 1
+fi
+
+if [ $WAN_STATUS -ne 0 ]; then
+  echo "❌ WanVideoWrapper install failed."
+  exit 1
+fi
 
 # Start ComfyUI
-echo "Starting ComfyUI"
+echo "▶️  Starting ComfyUI"
 if [ "$enable_optimizations" = "false" ]; then
     python3 "$NETWORK_VOLUME/ComfyUI/main.py" --listen
 else
-    python3 "$NETWORK_VOLUME/ComfyUI/main.py" --listen --use-sage-attention
-    if [ $? -ne 0 ]; then
-        echo "ComfyUI failed with --use-sage-attention. Retrying without it..."
-        python3 "$NETWORK_VOLUME/ComfyUI/main.py" --listen
-    fi
+    nohup bash -c "python3 \"$NETWORK_VOLUME\"/ComfyUI/main.py --listen --use-sage-attention 2>&1 | tee \"$NETWORK_VOLUME\"/comfyui_\"$RUNPOD_POD_ID\"_nohup.log" &
+    # python3 "$NETWORK_VOLUME/ComfyUI/main.py" --listen --use-sage-attention
+    until curl --silent --fail "$URL" --output /dev/null; do
+      echo "🔄  ComfyUI Starting Up... You can view the startup logs here: $NETWORK_VOLUME/comfyui_${RUNPOD_POD_ID}_nohup.log"
+      sleep 2
+    done
+    echo "🚀 ComfyUI is UP"
 fi
