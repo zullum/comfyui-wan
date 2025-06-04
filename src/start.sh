@@ -56,8 +56,8 @@ fi
 
 echo "Downloading CivitAI download script to /usr/local/bin"
 git clone "https://github.com/Hearmeman24/CivitAI_Downloader.git" || { echo "Git clone failed"; exit 1; }
-mv CivitAI_Downloader/download.py "/usr/local/bin/" || { echo "Move failed"; exit 1; }
-chmod +x "/usr/local/bin/download.py" || { echo "Chmod failed"; exit 1; }
+mv CivitAI_Downloader/download_with_aria.py "/usr/local/bin/" || { echo "Move failed"; exit 1; }
+chmod +x "/usr/local/bin/download_with_aria.py" || { echo "Chmod failed"; exit 1; }
 rm -rf CivitAI_Downloader  # Clean up the cloned repo
 pip install onnxruntime-gpu &
 
@@ -227,9 +227,41 @@ download_model "https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/reso
 
 # Keep checking until no aria2c processes are running
 while pgrep -x "aria2c" > /dev/null; do
-    echo "🔽 Downloads still in progress..."
+    echo "🔽 Model Downloads still in progress..."
     sleep 5  # Check every 5 seconds
 done
+
+declare -A MODEL_CATEGORIES=(
+    ["$NETWORK_VOLUME/ComfyUI/models/checkpoints"]="$CHECKPOINT_IDS_TO_DOWNLOAD"
+    ["$NETWORK_VOLUME/ComfyUI/models/loras"]="$LORAS_IDS_TO_DOWNLOAD"
+)
+
+# Counter to track background jobs
+download_count=0
+
+# Ensure directories exist and schedule downloads in background
+for TARGET_DIR in "${!MODEL_CATEGORIES[@]}"; do
+    mkdir -p "$TARGET_DIR"
+    IFS=',' read -ra MODEL_IDS <<< "${MODEL_CATEGORIES[$TARGET_DIR]}"
+
+    for MODEL_ID in "${MODEL_IDS[@]}"; do
+        sleep 1
+        echo "🚀 Scheduling download: $MODEL_ID to $TARGET_DIR"
+        (cd "$TARGET_DIR" && download_with_aria.py -m "$MODEL_ID") &
+        ((download_count++))
+    done
+done
+
+echo "📋 Scheduled $download_count downloads in background"
+
+# Wait for all downloads to complete
+echo "⏳ Waiting for downloads to complete..."
+while pgrep -x "aria2c" > /dev/null; do
+    echo "🔽 LoRA Downloads still in progress..."
+    sleep 5  # Check every 5 seconds
+done
+
+echo "✅ All models downloaded successfully!"
 
 # poll every 5 s until the PID is gone
   while kill -0 "$BUILD_PID" 2>/dev/null; do
@@ -283,31 +315,6 @@ for file in "$SOURCE_DIR"/*; do
         echo "Moving: $file to $WORKFLOW_DIR"
         mv "$file" "$WORKFLOW_DIR"
     fi
-done
-
-declare -A MODEL_CATEGORIES=(
-    ["$NETWORK_VOLUME/ComfyUI/models/checkpoints"]="CHECKPOINT_IDS_TO_DOWNLOAD"
-    ["$NETWORK_VOLUME/ComfyUI/models/loras"]="LORAS_IDS_TO_DOWNLOAD"
-)
-
-# Ensure directories exist and download models
-for TARGET_DIR in "${!MODEL_CATEGORIES[@]}"; do
-    ENV_VAR_NAME="${MODEL_CATEGORIES[$TARGET_DIR]}"
-    MODEL_IDS_STRING="${!ENV_VAR_NAME}"  # Get the value of the environment variable
-
-    # Skip if the environment variable is set to "ids_here"
-    if [ "$MODEL_IDS_STRING" == "replace_with_ids" ]; then
-        echo "Skipping downloads for $TARGET_DIR ($ENV_VAR_NAME is 'ids_here')"
-        continue
-    fi
-
-    mkdir -p "$TARGET_DIR"
-    IFS=',' read -ra MODEL_IDS <<< "$MODEL_IDS_STRING"
-
-    for MODEL_ID in "${MODEL_IDS[@]}"; do
-        echo "Downloading model: $MODEL_ID to $TARGET_DIR"
-        (cd "$TARGET_DIR" && download.py --model "$MODEL_ID")
-    done
 done
 
 if [ "$change_preview_method" == "true" ]; then
