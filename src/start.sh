@@ -192,8 +192,6 @@ if [ "$download_vace" == "true" ]; then
 
   echo "Downloading VACE text encoder"
 
-  download_model "https://huggingface.co/Kijai/WanVideo_comfy/resolve/main/umt5-xxl-enc-bf16.safetensors" "$TEXT_ENCODERS_DIR/umt5-xxl-enc-bf16.safetensors"
-
   download_model "https://huggingface.co/Kijai/WanVideo_comfy/resolve/main/Wan21_CausVid_14B_T2V_lora_rank32.safetensors" "$LORAS_DIR/Wan21_CausVid_14B_T2V_lora_rank32.safetensors"
 fi
 
@@ -214,6 +212,8 @@ echo "Downloading text encoders..."
 download_model "https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/main/split_files/text_encoders/umt5_xxl_fp8_e4m3fn_scaled.safetensors" "$TEXT_ENCODERS_DIR/umt5_xxl_fp8_e4m3fn_scaled.safetensors"
 
 download_model "https://huggingface.co/Kijai/WanVideo_comfy/resolve/main/open-clip-xlm-roberta-large-vit-huge-14_visual_fp16.safetensors" "$TEXT_ENCODERS_DIR/open-clip-xlm-roberta-large-vit-huge-14_visual_fp16.safetensors"
+
+download_model "https://huggingface.co/Kijai/WanVideo_comfy/resolve/main/umt5-xxl-enc-bf16.safetensors" "$TEXT_ENCODERS_DIR/umt5-xxl-enc-bf16.safetensors"
 
 # Create CLIP vision directory and download models
 mkdir -p "$CLIP_VISION_DIR"
@@ -260,6 +260,9 @@ while pgrep -x "aria2c" > /dev/null; do
     echo "🔽 LoRA Downloads still in progress..."
     sleep 5  # Check every 5 seconds
 done
+
+cd $LORAS_DIR
+wget https://huggingface.co/Kijai/WanVideo_comfy/resolve/main/Wan21_T2V_14B_lightx2v_cfg_step_distill_lora_rank32.safetensors
 
 echo "✅ All models downloaded successfully!"
 
