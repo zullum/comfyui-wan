@@ -206,6 +206,8 @@ if [ "$download_720p_native_models" == "true" ]; then
   download_model "https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/main/split_files/diffusion_models/wan2.1_t2v_1.3B_bf16.safetensors" "$DIFFUSION_MODELS_DIR/wan2.1_t2v_1.3B_bf16.safetensors"
 fi
 
+download_model "https://huggingface.co/Kijai/WanVideo_comfy/resolve/main/Wan21_T2V_14B_lightx2v_cfg_step_distill_lora_rank32.safetensors" "$LORAS_DIR/Wan21_T2V_14B_lightx2v_cfg_step_distill_lora_rank32.safetensors"
+
 # Download text encoders
 echo "Downloading text encoders..."
 
@@ -261,8 +263,6 @@ while pgrep -x "aria2c" > /dev/null; do
     sleep 5  # Check every 5 seconds
 done
 
-cd $LORAS_DIR
-wget https://huggingface.co/Kijai/WanVideo_comfy/resolve/main/Wan21_T2V_14B_lightx2v_cfg_step_distill_lora_rank32.safetensors
 
 echo "✅ All models downloaded successfully!"
 
