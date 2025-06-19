@@ -80,7 +80,7 @@ fi
 
 
 echo "🔧 Installing KJNodes packages..."
-pip install --no-cache-dir -r $NETWORK_VOLUME/ComfyUI/custom_nodes/ComfyUI-KJNodes/requirements.txt $
+pip install --no-cache-dir -r $NETWORK_VOLUME/ComfyUI/custom_nodes/ComfyUI-KJNodes/requirements.txt &
 KJ_PID=$!
 
 echo "🔧 Installing WanVideoWrapper packages..."
