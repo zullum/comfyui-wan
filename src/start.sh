@@ -385,6 +385,12 @@ if [ $WAN_STATUS -ne 0 ]; then
   exit 1
 fi
 
+echo "Renaming loras downloaded as zip files to safetensors files"
+cd $LORAS_DIR
+for file in *.zip; do
+    mv "$file" "${file%.zip}.safetensors"
+done
+
 # Start ComfyUI
 echo "▶️  Starting ComfyUI"
 if [ "$enable_optimizations" = "false" ]; then
