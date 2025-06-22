@@ -2250,59 +2250,6 @@
       }
     },
     {
-      "id": 278,
-      "type": "DWPreprocessor",
-      "pos": [
-        496.8731994628906,
-        415.042724609375
-      ],
-      "size": [
-        294.72265625,
-        222
-      ],
-      "flags": {
-        "collapsed": true
-      },
-      "order": 41,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "image",
-          "type": "IMAGE",
-          "link": 540
-        }
-      ],
-      "outputs": [
-        {
-          "name": "IMAGE",
-          "type": "IMAGE",
-          "links": [
-            541
-          ]
-        },
-        {
-          "name": "POSE_KEYPOINT",
-          "type": "POSE_KEYPOINT",
-          "links": null
-        }
-      ],
-      "properties": {
-        "cnr_id": "comfyui_controlnet_aux",
-        "ver": "83463c2e4b04e729268e57f638b4212e0da4badc",
-        "Node name for S&R": "DWPreprocessor",
-        "widget_ue_connectable": {}
-      },
-      "widgets_values": [
-        "enable",
-        "enable",
-        "enable",
-        1024,
-        "yolox_l.onnx",
-        "dw-ll_ucoco_384_bs5.torchscript.pt",
-        "disable"
-      ]
-    },
-    {
       "id": 297,
       "type": "INTConstant",
       "pos": [
@@ -2926,6 +2873,59 @@
       ],
       "color": "#222e40",
       "bgcolor": "#364254"
+    },
+    {
+      "id": 278,
+      "type": "DWPreprocessor",
+      "pos": [
+        496.8731994628906,
+        415.042724609375
+      ],
+      "size": [
+        294.72265625,
+        222
+      ],
+      "flags": {
+        "collapsed": true
+      },
+      "order": 41,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 540
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            541
+          ]
+        },
+        {
+          "name": "POSE_KEYPOINT",
+          "type": "POSE_KEYPOINT",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui_controlnet_aux",
+        "ver": "83463c2e4b04e729268e57f638b4212e0da4badc",
+        "Node name for S&R": "DWPreprocessor",
+        "widget_ue_connectable": {}
+      },
+      "widgets_values": [
+        "enable",
+        "enable",
+        "enable",
+        512,
+        "yolox_l.onnx",
+        "dw-ll_ucoco_384_bs5.torchscript.pt",
+        "disable"
+      ]
     }
   ],
   "links": [
@@ -3629,10 +3629,10 @@
   "config": {},
   "extra": {
     "ds": {
-      "scale": 0.7513148009015777,
+      "scale": 1.2100000000000002,
       "offset": [
-        2801.289893170544,
-        83.31537922750663
+        579.7740027715251,
+        -109.27997026887778
       ]
     },
     "groupNodes": {},
