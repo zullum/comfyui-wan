@@ -192,6 +192,13 @@ if [ "$download_vace" == "true" ]; then
 
 fi
 
+if [ "$download_vace_debug" == "true" ]; then
+  download_model "https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/main/split_files/diffusion_models/wan2.1_vace_14B_fp16.safetensors" "$DIFFUSION_MODELS_DIR/wan2.1_vace_14B_fp16.safetensors"
+fi
+
+
+
+
 # Download 720p native models
 if [ "$download_720p_native_models" == "true" ]; then
   echo "Downloading 720p native models..."
