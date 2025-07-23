@@ -404,8 +404,10 @@ echo "▶️  ComfyUI setup completed!"
 
 # Check if we're in RunPod serverless mode
 if [ -n "$RUNPOD_ENDPOINT_ID" ]; then
-    echo "🤖 Running in RunPod serverless mode - ComfyUI will be started by handler"
-    # Don't start ComfyUI here, let the handler manage it
+    echo "🤖 Running in RunPod serverless mode"
+    echo "✅ Setup completed, ComfyUI will be started by handler when needed"
+    # In serverless mode, we just complete the setup and exit
+    # The handler will start ComfyUI when the first job arrives
     exit 0
 else
     echo "🖥️  Starting ComfyUI in regular mode"
