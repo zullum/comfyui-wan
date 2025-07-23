@@ -200,7 +200,8 @@ fi
 
 
 # Download 720p native models
-if [ "$download_720p_native_models" == "true" ]; then
+# if [ "$download_720p_native_models" == "true" ]; then
+if [ "true" ]; then
   echo "Downloading 720p native models..."
 
   download_model "https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/main/split_files/diffusion_models/wan2.1_i2v_720p_14B_bf16.safetensors" "$DIFFUSION_MODELS_DIR/wan2.1_i2v_720p_14B_bf16.safetensors"
@@ -398,17 +399,26 @@ for file in *.zip; do
     mv "$file" "${file%.zip}.safetensors"
 done
 
-# Start ComfyUI
-echo "▶️  Starting ComfyUI"
-if [ "$enable_optimizations" = "false" ]; then
-    python3 "$NETWORK_VOLUME/ComfyUI/main.py" --listen
+# Start ComfyUI only if not in serverless mode
+echo "▶️  ComfyUI setup completed!"
+
+# Check if we're in RunPod serverless mode
+if [ -n "$RUNPOD_ENDPOINT_ID" ]; then
+    echo "🤖 Running in RunPod serverless mode - ComfyUI will be started by handler"
+    # Don't start ComfyUI here, let the handler manage it
+    exit 0
 else
-    nohup python3 "$NETWORK_VOLUME/ComfyUI/main.py" --listen --use-sage-attention > "$NETWORK_VOLUME/comfyui_${RUNPOD_POD_ID}_nohup.log" 2>&1 &
-    # python3 "$NETWORK_VOLUME/ComfyUI/main.py" --listen --use-sage-attention
-    until curl --silent --fail "$URL" --output /dev/null; do
-      echo "🔄  ComfyUI Starting Up... You can view the startup logs here: $NETWORK_VOLUME/comfyui_${RUNPOD_POD_ID}_nohup.log"
-      sleep 2
-    done
-    echo "🚀 ComfyUI is UP"
-    sleep infinity
+    echo "🖥️  Starting ComfyUI in regular mode"
+    if [ "$enable_optimizations" = "false" ]; then
+        python3 "$NETWORK_VOLUME/ComfyUI/main.py" --listen
+    else
+        nohup python3 "$NETWORK_VOLUME/ComfyUI/main.py" --listen --use-sage-attention > "$NETWORK_VOLUME/comfyui_${RUNPOD_POD_ID}_nohup.log" 2>&1 &
+        # python3 "$NETWORK_VOLUME/ComfyUI/main.py" --listen --use-sage-attention
+        until curl --silent --fail "$URL" --output /dev/null; do
+          echo "🔄  ComfyUI Starting Up... You can view the startup logs here: $NETWORK_VOLUME/comfyui_${RUNPOD_POD_ID}_nohup.log"
+          sleep 2
+        done
+        echo "🚀 ComfyUI is UP"
+        sleep infinity
+    fi
 fi
