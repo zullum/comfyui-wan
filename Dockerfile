@@ -95,15 +95,20 @@ RUN for repo in \
         fi; \
     done
 
-# Install RunPod serverless dependencies
-COPY requirements.txt /requirements.txt
+# Install Python dependencies
+COPY builder/requirements.txt /requirements.txt
 RUN --mount=type=cache,target=/root/.cache/pip \
-    pip install -r /requirements.txt
+    python -m pip install --upgrade pip && \
+    pip install -r requirements.txt && \
+    rm requirements.txt
 
+# Copy source files  
+ADD src .
+
+# Copy additional files
 COPY src/start_script.sh /start_script.sh
 RUN chmod +x /start_script.sh
 COPY 4xLSDIR.pth /4xLSDIR.pth
-COPY handler.py /handler.py
 
-# For serverless mode, start the handler; for regular mode, start the script
-CMD python -u /handler.py
+# Set the handler as the command
+CMD python -u handler.py

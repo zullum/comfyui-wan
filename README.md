@@ -412,7 +412,7 @@ generateVideo();
 
 1. **Install dependencies**:
    ```bash
-   pip install -r requirements.txt
+   pip install -r builder/requirements.txt
    ```
 
 2. **Set up ComfyUI** (if not using Docker):
@@ -425,21 +425,42 @@ generateVideo();
    ```bash
    # Set environment variable to skip serverless setup
    export RUNPOD_ENDPOINT_ID=""
+   cd src
    python handler.py --rp_serve_api --test_input '{"input": {"image": "https://example.com/test.jpg"}}'
    ```
+
+### Project Structure
+
+The project follows RunPod's recommended structure:
+
+```
+comfyui-wan/
+├── builder/
+│   ├── requirements.txt    # Python dependencies
+│   └── setup.sh           # Build-time setup script
+├── src/
+│   ├── handler.py         # Main serverless handler
+│   ├── start.sh           # ComfyUI setup script
+│   ├── start_script.sh    # Container startup script
+│   └── download.py        # Model download utility
+├── workflows/             # ComfyUI workflow files
+├── Dockerfile            # Container definition
+└── README.md            # Documentation
+```
 
 ### Deployment Architecture
 
 The deployment process works as follows:
 
 1. **Docker Build Phase**:
-   - Base CUDA environment setup
+   - Base CUDA environment setup with RunPod base image
    - ComfyUI and custom nodes installation
-   - RunPod dependencies installation (`requirements.txt`)
-   - Handler and workflow files copying
+   - RunPod dependencies installation from `builder/requirements.txt`
+   - Source files copied from `src/` directory
+   - Build verification via `builder/setup.sh`
 
 2. **Container Startup**:
-   - Handler starts and detects serverless mode
+   - `src/handler.py` starts and detects serverless mode
    - Runs setup script to download models and configure ComfyUI
    - Starts ComfyUI server in background
    - Begins accepting RunPod serverless requests
@@ -447,7 +468,7 @@ The deployment process works as follows:
 3. **Request Processing**:
    - Handler receives job via RunPod API
    - Validates input and downloads images
-   - Executes ComfyUI workflow
+   - Executes ComfyUI workflow from `workflows/` directory
    - Returns video URL or base64 data
 
 ## Environment Variables

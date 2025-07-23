@@ -14,6 +14,11 @@ This is a Docker-based ComfyUI worker system optimized for Wan 2.1 video generat
 - **Run locally**: `docker-compose up`
 - **Access ComfyUI**: http://localhost:8188 (UI), http://localhost:8000 (API)
 
+### RunPod Serverless
+- **Install dependencies**: `pip install -r builder/requirements.txt`
+- **Test handler locally**: `cd src && python handler.py --rp_serve_api`
+- **Build verification**: `bash builder/setup.sh`
+
 ### Model Management
 - **Download CivitAI models**: `python src/download.py -m MODEL_ID [-t TOKEN]`
 - **Environment variables**: Set `civitai_token` for automatic authentication
