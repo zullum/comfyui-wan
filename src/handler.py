@@ -246,7 +246,11 @@ def handler(job: Dict[str, Any]) -> Dict[str, Any]:
         
         # Ensure ComfyUI is ready before processing
         logger.info("🔧 Checking ComfyUI readiness...")
-        ensure_comfyui_ready()
+        if not ensure_comfyui_ready():
+            return {
+                "error": "ComfyUI failed to initialize. Please try again later.",
+                "details": "The ComfyUI server did not become ready within the timeout period"
+            }
         logger.info("✅ ComfyUI ready, proceeding with job")
         
         # Validate input
@@ -317,43 +321,108 @@ def setup_comfyui():
         """Run setup in background thread"""
         global _comfyui_ready
         try:
-            logger.info("Starting ComfyUI setup in background...")
+            logger.info("🚀 Starting ComfyUI setup in background...")
             
             # Check if ComfyUI is already available (container restart case)
             comfyui_path = "/workspace/ComfyUI"
             if os.path.exists(comfyui_path):
-                logger.info("ComfyUI directory found, checking if server is running...")
+                logger.info("📁 ComfyUI directory found, checking if server is running...")
                 try:
                     import requests
                     response = requests.get(f"{COMFYUI_API_URL}/", timeout=3)
                     if response.status_code == 200:
-                        logger.info("ComfyUI server already running!")
+                        logger.info("✅ ComfyUI server already running!")
                         _comfyui_ready = True
                         return
                 except:
-                    pass
+                    logger.info("⚠️ ComfyUI server not responding, will start setup")
+            else:
+                logger.info("📁 ComfyUI directory not found, starting full setup...")
             
-            # Run the setup script
-            logger.info("Running setup script...")
+            # Run the setup script with real-time logging
+            logger.info("🔧 Executing setup script...")
             process = subprocess.Popen(["/start_script.sh"], 
                                      stdout=subprocess.PIPE, 
-                                     stderr=subprocess.PIPE,
-                                     text=True)
+                                     stderr=subprocess.STDOUT,  # Merge stderr to stdout
+                                     text=True,
+                                     bufsize=1,  # Line buffered
+                                     universal_newlines=True)
             
-            # Wait for completion but don't block main thread
-            stdout, stderr = process.communicate()
+            # Log output in real-time while process runs
+            setup_logs = []
+            for line in iter(process.stdout.readline, ''):
+                if line:
+                    line = line.rstrip()
+                    setup_logs.append(line)
+                    # Log important lines
+                    if any(keyword in line.lower() for keyword in ['error', 'fail', 'downloading', 'installing', 'finished', 'ready']):
+                        logger.info(f"📋 Setup: {line}")
+                    
+                    # Check if we've reached a good state
+                    if "setup completed" in line.lower() or "comfyui is up" in line.lower():
+                        break
             
-            if process.returncode == 0:
+            # Wait for process to complete
+            return_code = process.wait()
+            
+            if return_code == 0:
                 logger.info("✅ Setup script completed successfully")
-                logger.info("📦 Models and ComfyUI are ready")
-                _comfyui_ready = True
+                logger.info("🎯 ComfyUI setup finished, starting server check...")
+                
+                # Try to start ComfyUI if it's not already running
+                try:
+                    import requests
+                    # Wait a bit for any existing server to be ready
+                    time.sleep(5)
+                    
+                    # Check if server is running
+                    try:
+                        response = requests.get(f"{COMFYUI_API_URL}/", timeout=3)
+                        if response.status_code == 200:
+                            logger.info("✅ ComfyUI server is ready!")
+                            _comfyui_ready = True
+                            return
+                    except:
+                        pass
+                    
+                    # If not running, start it
+                    logger.info("🚀 Starting ComfyUI server...")
+                    server_process = subprocess.Popen([
+                        "python3", f"{comfyui_path}/main.py", 
+                        "--listen", "--use-sage-attention"
+                    ], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                    
+                    # Wait for server to be ready
+                    for i in range(60):  # Wait up to 2 minutes
+                        try:
+                            response = requests.get(f"{COMFYUI_API_URL}/", timeout=5)
+                            if response.status_code == 200:
+                                logger.info("✅ ComfyUI server is ready!")
+                                _comfyui_ready = True
+                                return
+                        except:
+                            pass
+                        time.sleep(2)
+                        logger.info(f"⏳ Waiting for ComfyUI server... ({i*2}s)")
+                    
+                    logger.warning("⚠️ ComfyUI server took longer than expected to start")
+                    _comfyui_ready = True  # Allow processing anyway
+                    
+                except Exception as e:
+                    logger.error(f"❌ Failed to start ComfyUI server: {str(e)}")
+                    _comfyui_ready = True  # Allow processing anyway
             else:
-                logger.error(f"❌ Setup script failed with code {process.returncode}")
-                if stderr:
-                    logger.error(f"STDERR: {stderr[:1000]}...")  # Limit log size
+                logger.error(f"❌ Setup script failed with code {return_code}")
+                # Log last few lines of setup output for debugging
+                if setup_logs:
+                    logger.error("📋 Last setup output lines:")
+                    for line in setup_logs[-10:]:  # Last 10 lines
+                        logger.error(f"  {line}")
             
         except Exception as e:
-            logger.error(f"Setup failed: {str(e)}")
+            logger.error(f"❌ Setup failed with exception: {str(e)}")
+            import traceback
+            logger.error(f"Traceback: {traceback.format_exc()}")
     
     # Start setup in background thread
     setup_thread = threading.Thread(target=run_setup, daemon=True)
@@ -365,54 +434,102 @@ def setup_comfyui():
 
 def ensure_comfyui_ready():
     """Ensure ComfyUI is ready before processing jobs"""
-    global _comfyui_ready
+    global _comfyui_ready, _setup_started
     import requests
     import time
     
     # If we already confirmed it's ready, skip checks
     if _comfyui_ready:
+        logger.info("✅ ComfyUI already confirmed ready")
         return True
     
-    comfyui_path = "/workspace/ComfyUI"
-    max_wait_time = 300  # 5 minutes max wait for setup
-    check_interval = 5   # Check every 5 seconds
+    # If setup hasn't started yet, something is wrong
+    if not _setup_started:
+        logger.error("❌ Setup was never started! This shouldn't happen.")
+        return False
     
-    logger.info("Waiting for ComfyUI to be ready...")
+    comfyui_path = "/workspace/ComfyUI"
+    max_wait_time = 600  # 10 minutes max wait for setup
+    check_interval = 10   # Check every 10 seconds
+    
+    logger.info("⏳ Waiting for ComfyUI to be ready...")
     
     start_time = time.time()
+    last_log_time = 0
+    
     while time.time() - start_time < max_wait_time:
-        # Check if ComfyUI directory exists
-        if os.path.exists(comfyui_path):
-            logger.info("ComfyUI directory found, checking server...")
-            
-            # Try to connect to ComfyUI server
-            try:
-                response = requests.get(f"{COMFYUI_API_URL}/", timeout=3)
-                if response.status_code == 200:
-                    logger.info("ComfyUI server is ready!")
-                    _comfyui_ready = True
-                    return True
-            except requests.exceptions.RequestException:
-                # Server not ready yet, try to start it
-                logger.info("ComfyUI server not responding, attempting to start...")
-                try:
-                    subprocess.Popen([
-                        "python3", f"{comfyui_path}/main.py", 
-                        "--listen", "--use-sage-attention"
-                    ], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-                    
-                    # Give it time to start
-                    time.sleep(10)
-                    continue
-                except Exception as e:
-                    logger.warning(f"Failed to start ComfyUI: {str(e)}")
+        current_time = time.time()
+        elapsed = int(current_time - start_time)
         
-        logger.info(f"ComfyUI not ready yet, waiting... ({int(time.time() - start_time)}s elapsed)")
+        # Log progress every 30 seconds
+        if current_time - last_log_time >= 30:
+            logger.info(f"⏳ Still waiting for ComfyUI... ({elapsed}s elapsed)")
+            last_log_time = current_time
+        
+        # Check if global ready flag was set by setup thread
+        if _comfyui_ready:
+            logger.info("✅ ComfyUI ready flag set by setup thread!")
+            return True
+        
+        # Check if ComfyUI server is responding
+        try:
+            response = requests.get(f"{COMFYUI_API_URL}/", timeout=5)
+            if response.status_code == 200:
+                logger.info("✅ ComfyUI server is responding!")
+                _comfyui_ready = True
+                return True
+        except requests.exceptions.RequestException:
+            pass
+        
+        # Check if at least the directory exists
+        if os.path.exists(comfyui_path):
+            if elapsed > 60 and elapsed % 60 == 0:  # Every minute after first minute
+                logger.info(f"📁 ComfyUI directory exists, still waiting for server... ({elapsed}s)")
+        else:
+            if elapsed > 30 and elapsed % 30 == 0:  # Every 30s for directory check
+                logger.info(f"📁 Still waiting for ComfyUI directory... ({elapsed}s)")
+        
         time.sleep(check_interval)
     
-    # If we get here, setup is taking too long - but don't fail completely
-    logger.warning("ComfyUI setup is taking longer than expected, but will continue processing")
-    return True
+    # Timeout reached - make one final attempt
+    logger.warning("⚠️ ComfyUI setup timeout reached, making final check...")
+    
+    # Final server check
+    try:
+        response = requests.get(f"{COMFYUI_API_URL}/", timeout=10)
+        if response.status_code == 200:
+            logger.info("✅ ComfyUI server responded on final check!")
+            _comfyui_ready = True
+            return True
+    except:
+        pass
+    
+    # If ComfyUI directory exists, try to start server manually
+    if os.path.exists(comfyui_path):
+        logger.warning("⚠️ ComfyUI directory exists but server not responding. Attempting manual start...")
+        try:
+            subprocess.Popen([
+                "python3", f"{comfyui_path}/main.py", 
+                "--listen", "--use-sage-attention"
+            ], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            
+            # Give it 30 seconds to start
+            for i in range(15):
+                time.sleep(2)
+                try:
+                    response = requests.get(f"{COMFYUI_API_URL}/", timeout=3)
+                    if response.status_code == 200:
+                        logger.info("✅ Manual ComfyUI start successful!")
+                        _comfyui_ready = True
+                        return True
+                except:
+                    pass
+        except Exception as e:
+            logger.error(f"❌ Failed to manually start ComfyUI: {str(e)}")
+    
+    # Last resort - return an error
+    logger.error("❌ ComfyUI failed to become ready within timeout period")
+    return False
 
 # Start the serverless handler
 if __name__ == "__main__":
@@ -429,7 +546,13 @@ if __name__ == "__main__":
     
     # Add a simple health check
     def health_check():
-        return {"status": "ready", "timestamp": time.time()}
+        global _comfyui_ready, _setup_started
+        return {
+            "status": "ready",
+            "timestamp": time.time(),
+            "setup_started": _setup_started,
+            "comfyui_ready": _comfyui_ready
+        }
     
     runpod.serverless.start({
         "handler": handler,

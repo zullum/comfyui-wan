@@ -68,7 +68,7 @@ https://api.runpod.ai/v2/YOUR_ENDPOINT_ID/run
 ```json
 {
   "input": {
-    "image": "https://example.com/image.jpg",
+    "image": "https://cdn.pixabay.com/photo/2023/07/30/09/12/red-hair-girl-8158373_1280.jpg",
     "positive_prompt": "A beautiful woman walking towards the camera",
     "negative_prompt": "blurry, static, low quality",
     "width": 720,

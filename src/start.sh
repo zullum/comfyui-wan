@@ -199,24 +199,26 @@ fi
 
 
 
-# Download 720p native models
-# if [ "$download_720p_native_models" == "true" ]; then
-if [ "true" ]; then
-  echo "Downloading 720p native models..."
+# Download 720p native models (for serverless)
+echo "📥 Starting model downloads for serverless deployment..."
+echo "  Target directory: $DIFFUSION_MODELS_DIR"
 
-  download_model "https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/main/split_files/diffusion_models/wan2.1_i2v_720p_14B_bf16.safetensors" "$DIFFUSION_MODELS_DIR/wan2.1_i2v_720p_14B_bf16.safetensors"
+download_model "https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/main/split_files/diffusion_models/wan2.1_i2v_720p_14B_bf16.safetensors" "$DIFFUSION_MODELS_DIR/wan2.1_i2v_720p_14B_bf16.safetensors"
 
-  download_model "https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/main/split_files/diffusion_models/wan2.1_t2v_14B_bf16.safetensors" "$DIFFUSION_MODELS_DIR/wan2.1_t2v_14B_bf16.safetensors"
+download_model "https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/main/split_files/diffusion_models/wan2.1_t2v_14B_bf16.safetensors" "$DIFFUSION_MODELS_DIR/wan2.1_t2v_14B_bf16.safetensors"
 
-  download_model "https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/main/split_files/diffusion_models/wan2.1_t2v_1.3B_bf16.safetensors" "$DIFFUSION_MODELS_DIR/wan2.1_t2v_1.3B_bf16.safetensors"
-fi
+download_model "https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/main/split_files/diffusion_models/wan2.1_t2v_1.3B_bf16.safetensors" "$DIFFUSION_MODELS_DIR/wan2.1_t2v_1.3B_bf16.safetensors"
 
-echo "Downloading optimization loras"
+echo "📥 Core diffusion models download initiated"
+
+echo "📥 Downloading optimization LoRAs..."
+echo "  Target directory: $LORAS_DIR"
 download_model "https://huggingface.co/Kijai/WanVideo_comfy/resolve/main/Wan21_CausVid_14B_T2V_lora_rank32.safetensors" "$LORAS_DIR/Wan21_CausVid_14B_T2V_lora_rank32.safetensors"
 download_model "https://huggingface.co/Kijai/WanVideo_comfy/resolve/main/Wan21_T2V_14B_lightx2v_cfg_step_distill_lora_rank32.safetensors" "$LORAS_DIR/Wan21_T2V_14B_lightx2v_cfg_step_distill_lora_rank32.safetensors"
 
 # Download text encoders
-echo "Downloading text encoders..."
+echo "📥 Downloading text encoders..."
+echo "  Target directory: $TEXT_ENCODERS_DIR"
 
 download_model "https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/main/split_files/text_encoders/umt5_xxl_fp8_e4m3fn_scaled.safetensors" "$TEXT_ENCODERS_DIR/umt5_xxl_fp8_e4m3fn_scaled.safetensors"
 
@@ -225,20 +227,28 @@ download_model "https://huggingface.co/Kijai/WanVideo_comfy/resolve/main/open-cl
 download_model "https://huggingface.co/Kijai/WanVideo_comfy/resolve/main/umt5-xxl-enc-bf16.safetensors" "$TEXT_ENCODERS_DIR/umt5-xxl-enc-bf16.safetensors"
 
 # Create CLIP vision directory and download models
+echo "📥 Downloading CLIP vision models..."
+echo "  Target directory: $CLIP_VISION_DIR"
 mkdir -p "$CLIP_VISION_DIR"
 download_model "https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/main/split_files/clip_vision/clip_vision_h.safetensors" "$CLIP_VISION_DIR/clip_vision_h.safetensors"
 
 # Download VAE
-echo "Downloading VAE..."
+echo "📥 Downloading VAE models..."
+echo "  Target directory: $VAE_DIR"
 download_model "https://huggingface.co/Kijai/WanVideo_comfy/resolve/main/Wan2_1_VAE_bf16.safetensors" "$VAE_DIR/Wan2_1_VAE_bf16.safetensors"
 
 download_model "https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/main/split_files/vae/wan_2.1_vae.safetensors" "$VAE_DIR/wan_2.1_vae.safetensors"
 
 # Keep checking until no aria2c processes are running
+echo "⏳ Waiting for all model downloads to complete..."
+download_start_time=$(date +%s)
 while pgrep -x "aria2c" > /dev/null; do
-    echo "🔽 Model Downloads still in progress..."
-    sleep 5  # Check every 5 seconds
+    current_time=$(date +%s)
+    elapsed=$((current_time - download_start_time))
+    echo "🔽 Model downloads still in progress... (${elapsed}s elapsed)"
+    sleep 10  # Check every 10 seconds
 done
+echo "✅ All core model downloads completed!"
 
 declare -A MODEL_CATEGORIES=(
     ["$NETWORK_VOLUME/ComfyUI/models/checkpoints"]="$CHECKPOINT_IDS_TO_DOWNLOAD"
@@ -264,11 +274,19 @@ done
 echo "📋 Scheduled $download_count downloads in background"
 
 # Wait for all downloads to complete
-echo "⏳ Waiting for downloads to complete..."
-while pgrep -x "aria2c" > /dev/null; do
-    echo "🔽 LoRA Downloads still in progress..."
-    sleep 5  # Check every 5 seconds
-done
+if [ $download_count -gt 0 ]; then
+    echo "⏳ Waiting for additional CivitAI downloads to complete..."
+    additional_start_time=$(date +%s)
+    while pgrep -x "aria2c" > /dev/null; do
+        current_time=$(date +%s)
+        elapsed=$((current_time - additional_start_time))
+        echo "🔽 Additional downloads still in progress... (${elapsed}s elapsed)"
+        sleep 10  # Check every 10 seconds
+    done
+    echo "✅ All additional downloads completed!"
+else
+    echo "📋 No additional models to download"
+fi
 
 
 echo "✅ All models downloaded successfully!"
@@ -405,7 +423,12 @@ echo "▶️  ComfyUI setup completed!"
 # Check if we're in RunPod serverless mode
 if [ -n "$RUNPOD_ENDPOINT_ID" ]; then
     echo "🤖 Running in RunPod serverless mode"
-    echo "✅ Setup completed, ComfyUI will be started by handler when needed"
+    echo "✅ Setup completed successfully!"
+    echo "📋 Summary:"
+    echo "  - ComfyUI directory: $COMFYUI_DIR"
+    echo "  - Custom nodes installed: $(ls $CUSTOM_NODES_DIR | wc -l) directories"
+    echo "  - Models directory: $NETWORK_VOLUME/ComfyUI/models"
+    echo "🚀 ComfyUI will be started by handler when needed"
     # In serverless mode, we just complete the setup and exit
     # The handler will start ComfyUI when the first job arrives
     exit 0
