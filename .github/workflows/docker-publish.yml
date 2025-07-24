@@ -17,12 +17,22 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
+      max-parallel: 1
       matrix:
         variant: [base, sdxl, sd3, flux1-schnell, flux1-dev]
 
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
+
+    - name: Free up disk space
+      run: |
+        sudo rm -rf /usr/share/dotnet
+        sudo rm -rf /usr/local/lib/android
+        sudo rm -rf /opt/ghc
+        sudo rm -rf /opt/hostedtoolcache/CodeQL
+        sudo docker system prune -af
+        df -h
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
@@ -62,3 +72,9 @@ jobs:
           HUGGINGFACE_ACCESS_TOKEN=${{ secrets.HUGGINGFACE_ACCESS_TOKEN }}
         cache-from: type=gha
         cache-to: type=gha,mode=max
+
+    - name: Clean up after build
+      if: always()
+      run: |
+        docker system prune -af
+        df -h
