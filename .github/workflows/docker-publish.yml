@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
 
 env:
-  DOCKERHUB_REPO: zullum
+  DOCKERHUB_REPO: szulic
   DOCKERHUB_IMG: comfyui-wan
 
 jobs:
