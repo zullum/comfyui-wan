@@ -1,6 +1,11 @@
+version: '3.8'
 services:
   comfyui-worker:
-    image: timpietruskyblibla/runpod-worker-comfy:3.4.0-flux1-dev
+    # Use your custom built image or build locally
+    image: ${IMAGE_NAME:-szulic/comfyui-wan:latest-wan}
+    build: 
+      context: .
+      target: final
     deploy:
       resources:
         reservations:
@@ -10,9 +15,15 @@ services:
               capabilities: [gpu]
     environment:
       - SERVE_API_LOCALLY=true
+      - enable_optimizations=true
+      - download_480p_native_models=true
+      - download_720p_native_models=false
+      - download_vace=false
+      - change_preview_method=true
     ports:
-      - "8000:8000"
-      - "8188:8188"
+      - "8888:8888"  # Jupyter
+      - "8188:8188"  # ComfyUI
+      - "8288:8288"  # Flask API
     volumes:
-      - ./data/comfyui/output:/comfyui/output
-      - ./data/runpod-volume:/runpod-volume
+      - ./data/comfyui/output:/workspace/ComfyUI/output
+      - ./data/runpod-volume:/workspace

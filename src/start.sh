@@ -4,6 +4,9 @@
 TCMALLOC="$(ldconfig -p | grep -Po "libtcmalloc.so.\d" | head -n 1)"
 export LD_PRELOAD="${TCMALLOC}"
 
+# Serve API locally if requested
+export SERVE_API_LOCALLY="${SERVE_API_LOCALLY:-true}"
+
 # This is in case there's any special installs or overrides that needs to occur when starting the machine before starting ComfyUI
 if [ -f "/workspace/additional_params.sh" ]; then
     chmod +x /workspace/additional_params.sh
@@ -36,10 +39,10 @@ if [ ! -d "$NETWORK_VOLUME" ]; then
     echo "NETWORK_VOLUME directory '$NETWORK_VOLUME' does not exist. You are NOT using a network volume. Setting NETWORK_VOLUME to '/' (root directory)."
     NETWORK_VOLUME="/"
     echo "NETWORK_VOLUME directory doesn't exist. Starting JupyterLab on root directory..."
-    jupyter-lab --ip=0.0.0.0 --allow-root --no-browser --NotebookApp.token='' --NotebookApp.password='' --ServerApp.allow_origin='*' --ServerApp.allow_credentials=True --notebook-dir=/ &
+    jupyter-lab --ip=0.0.0.0 --port=8888 --allow-root --no-browser --NotebookApp.token='' --NotebookApp.password='' --ServerApp.allow_origin='*' --ServerApp.allow_credentials=True --notebook-dir=/ &
 else
     echo "NETWORK_VOLUME directory exists. Starting JupyterLab..."
-    jupyter-lab --ip=0.0.0.0 --allow-root --no-browser --NotebookApp.token='' --NotebookApp.password='' --ServerApp.allow_origin='*' --ServerApp.allow_credentials=True --notebook-dir=/workspace &
+    jupyter-lab --ip=0.0.0.0 --port=8888 --allow-root --no-browser --NotebookApp.token='' --NotebookApp.password='' --ServerApp.allow_origin='*' --ServerApp.allow_credentials=True --notebook-dir=/workspace &
 fi
 
 COMFYUI_DIR="$NETWORK_VOLUME/ComfyUI"
@@ -418,27 +421,25 @@ for file in *.zip; do
     mv "$file" "${file%.zip}.safetensors"
 done
 
-# Start ComfyUI in background
-echo "🖥️  Starting ComfyUI on port 8188..."
-if [ "$enable_optimizations" = "false" ]; then
-    nohup python3 "$NETWORK_VOLUME/ComfyUI/main.py" --listen > "$NETWORK_VOLUME/comfyui_${RUNPOD_POD_ID}_nohup.log" 2>&1 &
-else
-    nohup python3 "$NETWORK_VOLUME/ComfyUI/main.py" --listen --use-sage-attention > "$NETWORK_VOLUME/comfyui_${RUNPOD_POD_ID}_nohup.log" 2>&1 &
+# Start Flask API server first (if we have it)
+if [ -f "/comfyui-wan/src/flask_api.py" ]; then
+    echo "🌐 Starting Flask API server on port 8288..."
+    mkdir -p /workspace
+    nohup python3 /comfyui-wan/src/flask_api.py > /workspace/flask_api.log 2>&1 &
+    FLASK_PID=$!
+    echo "Flask API started (PID: $FLASK_PID)"
 fi
 
-# Wait for ComfyUI to be ready
-until curl --silent --fail "$URL" --output /dev/null; do
-  echo "🔄  ComfyUI Starting Up... You can view the startup logs here: $NETWORK_VOLUME/comfyui_${RUNPOD_POD_ID}_nohup.log"
-  sleep 2
-done
-echo "🚀 ComfyUI is UP"
-
-# Start Flask API server
-echo "🌐 Starting Flask API server on port 8288..."
-mkdir -p /workspace
-nohup python3 /comfyui-wan/src/flask_api.py > /workspace/flask_api.log 2>&1 &
-FLASK_PID=$!
-echo "Flask API started (PID: $FLASK_PID)"
-
-# Keep container running
-sleep infinity
+# Start ComfyUI
+echo "▶️  Starting ComfyUI"
+if [ "$enable_optimizations" = "false" ]; then
+    python3 "$NETWORK_VOLUME/ComfyUI/main.py" --listen 0.0.0.0
+else
+    nohup python3 "$NETWORK_VOLUME/ComfyUI/main.py" --listen 0.0.0.0 --use-sage-attention > "$NETWORK_VOLUME/comfyui_${RUNPOD_POD_ID}_nohup.log" 2>&1 &
+    until curl --silent --fail "$URL" --output /dev/null; do
+      echo "🔄  ComfyUI Starting Up... You can view the startup logs here: $NETWORK_VOLUME/comfyui_${RUNPOD_POD_ID}_nohup.log"
+      sleep 2
+    done
+    echo "🚀 ComfyUI is UP"
+    sleep infinity
+fi

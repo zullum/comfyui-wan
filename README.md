@@ -24,13 +24,30 @@ This repository provides a RunPod serverless API for generating high-quality vid
 
 ## Quick Start
 
+### Using Pre-built Docker Image (RunPod Template)
+
+**Image**: `szulic/comfyui-wan:latest-wan`
+
+**Required Ports**:
+- 8888 (Jupyter)
+- 8188 (ComfyUI) 
+- 8288 (Flask API)
+
+**Environment Variables**:
+```
+SERVE_API_LOCALLY=true
+enable_optimizations=true
+download_480p_native_models=true
+change_preview_method=true
+```
+
 ### 1. Deploy to RunPod
 
-1. **Create RunPod Endpoint**:
-   - Go to [RunPod Console](https://runpod.io/console/serverless)
-   - Click "New Endpoint"
-   - Select "Custom" and choose "GitHub Repository"
-   - Enter repository URL: `https://github.com/YOUR_USERNAME/comfyui-wan`
+1. **Create RunPod Pod**:
+   - Go to [RunPod Console](https://runpod.io/console/pods)
+   - Click "Deploy" on a GPU pod
+   - Select "Custom" image: `szulic/comfyui-wan:latest-wan`
+   - Configure ports: 8888, 8188, 8288
    - Select GPU: RTX 4090 or better (24GB+ VRAM recommended)
 
 2. **Configure Environment Variables** (optional):
