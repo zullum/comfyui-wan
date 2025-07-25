@@ -46,7 +46,12 @@ RUN --mount=type=cache,target=/root/.cache/pip \
 # ComfyUI install
 # ------------------------------------------------------------
 RUN --mount=type=cache,target=/root/.cache/pip \
-    /usr/bin/yes | comfy --workspace /ComfyUI install
+    # Clone ComfyUI directly for better control
+    git clone https://github.com/comfyanonymous/ComfyUI.git /ComfyUI && \
+    cd /ComfyUI && \
+    pip install -r requirements.txt && \
+    # Install additional dependencies
+    pip install websocket-client
 
 FROM base AS final
 # Make sure to use the virtual environment here too
