@@ -51,6 +51,10 @@ RUN --mount=type=cache,target=/root/.cache/pip \
 FROM base AS final
 # Make sure to use the virtual environment here too
 ENV PATH="/opt/venv/bin:$PATH"
+
+# Accept build argument for model type
+ARG MODEL_TYPE=""
+
 RUN pip install opencv-python
 
 RUN for repo in \
@@ -111,6 +115,13 @@ ADD src .
 COPY src/start_script.sh /start_script.sh
 RUN chmod +x /start_script.sh
 COPY 4xLSDIR.pth /4xLSDIR.pth
+
+# Set environment variables for Wan model downloads
+ENV download_480p_native_models=true \
+    download_720p_native_models=true \
+    download_vace=true \
+    change_preview_method=true \
+    enable_optimizations=true
 
 # Set the handler as the command
 CMD python -u handler.py

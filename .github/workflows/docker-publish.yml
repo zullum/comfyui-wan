@@ -19,7 +19,7 @@ jobs:
       fail-fast: false
       max-parallel: 1
       matrix:
-        variant: [base, sdxl, sd3, flux1-schnell, flux1-dev]
+        variant: [wan]
 
     steps:
     - name: Checkout repository
@@ -62,13 +62,13 @@ jobs:
       with:
         context: .
         file: ./Dockerfile
-        target: ${{ matrix.variant == 'base' && 'base' || 'final' }}
+        target: final
         platforms: linux/amd64
         push: ${{ github.event_name != 'pull_request' }}
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
         build-args: |
-          MODEL_TYPE=${{ matrix.variant != 'base' && matrix.variant || '' }}
+          MODEL_TYPE=wan
           HUGGINGFACE_ACCESS_TOKEN=${{ secrets.HUGGINGFACE_ACCESS_TOKEN }}
         cache-from: type=gha
         cache-to: type=gha,mode=max
