@@ -1271,7 +1271,7 @@
       "outputs": [],
       "properties": {},
       "widgets_values": [
-        "Select your prompt and video size here ↓"
+        "Select your prompt and video size here \u2193"
       ],
       "color": "#432",
       "bgcolor": "#653"
@@ -1546,7 +1546,7 @@
       "outputs": [],
       "properties": {},
       "widgets_values": [
-        "Modify num_frames here for video length ↓"
+        "Modify num_frames here for video length \u2193"
       ],
       "color": "#432",
       "bgcolor": "#653"
@@ -2367,7 +2367,7 @@
         "aux_id": "kijai/ComfyUI-WanVideoWrapper"
       },
       "widgets_values": [
-        "wan2.1_i2v_480p_14B_bf16.safetensors",
+        "wan2.1_i2v_720p_14B_bf16.safetensors",
         "fp16",
         "fp8_e4m3fn",
         "offload_device",
@@ -2636,7 +2636,7 @@
       "outputs": [],
       "properties": {},
       "widgets_values": [
-        "Load your models here ↓"
+        "Load your models here \u2193"
       ],
       "color": "#432",
       "bgcolor": "#653"
@@ -3043,7 +3043,7 @@
       "outputs": [],
       "properties": {},
       "widgets_values": [
-        "These nodes are for removing the first 6 frames from the image, these are junk frames that hurt the natural flow of the video ↓"
+        "These nodes are for removing the first 6 frames from the image, these are junk frames that hurt the natural flow of the video \u2193"
       ],
       "color": "#432",
       "bgcolor": "#653"

@@ -421,6 +421,12 @@ done
 # Start ComfyUI only if not in serverless mode
 echo "▶️  ComfyUI setup completed!"
 
+# Start Flask API server in background
+echo "🌐 Starting Flask API server on port 8288..."
+nohup python3 /flask_api.py > /workspace/flask_api.log 2>&1 &
+FLASK_PID=$!
+echo "Flask API started (PID: $FLASK_PID)"
+
 # Check if we're in RunPod serverless mode
 if [ -n "$RUNPOD_ENDPOINT_ID" ]; then
     echo "🤖 Running in RunPod serverless mode"

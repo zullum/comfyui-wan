@@ -1202,7 +1202,7 @@
         "widget_ue_connectable": {}
       },
       "widgets_values": [
-        "wan2.1_i2v_480p_14B_bf16.safetensors",
+        "wan2.1_i2v_720p_14B_bf16.safetensors",
         "bf16",
         "fp8_e5m2",
         "offload_device",
@@ -1510,7 +1510,7 @@
         "widget_ue_connectable": {}
       },
       "widgets_values": [
-        "Default resolution is set to 480P, change to 720P if running on a strong GPU"
+        "Default resolution is set to 720P, change to 480P if running on a weaker GPU"
       ],
       "color": "#432",
       "bgcolor": "#653"
