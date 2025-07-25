@@ -138,8 +138,8 @@ download_model() {
 
     echo "📥 Downloading $destination_file to $destination_dir..."
 
-    # Download without falloc (since it's not supported in your environment)
-    aria2c -x 16 -s 16 -k 1M --continue=true -d "$destination_dir" -o "$destination_file" "$url" &
+    # Download with retry and connection limits
+    aria2c -x 8 -s 8 -k 1M --continue=true --retry-wait=3 --max-tries=5 --timeout=60 -d "$destination_dir" -o "$destination_file" "$url" &
 
     echo "Download started in background for $destination_file"
 }

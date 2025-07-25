@@ -79,6 +79,12 @@ jobs:
         cache-from: type=gha
         cache-to: type=gha,mode=max
 
+    - name: Check image size
+      if: github.event_name != 'pull_request'
+      run: |
+        echo "Checking final image size..."
+        docker images szulic/comfyui-wan:latest-wan --format "table {{.Repository}}\t{{.Tag}}\t{{.Size}}"
+
     - name: Clean up after build
       if: always()
       run: |
