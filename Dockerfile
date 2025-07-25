@@ -106,5 +106,14 @@ ENV download_480p_native_models=true \
     change_preview_method=true \
     enable_optimizations=true
 
-# Set the handler as the command
-CMD python -u handler.py
+# Create entrypoint script
+RUN echo '#!/bin/bash\n\
+if [ -n "$RUNPOD_ENDPOINT_ID" ]; then\n\
+    echo "🚀 Running in serverless mode"\n\
+    python -u handler.py\n\
+else\n\
+    echo "🖥️ Running in pod mode"\n\
+    /start_script.sh\n\
+fi' > /entrypoint.sh && chmod +x /entrypoint.sh
+
+CMD ["/entrypoint.sh"]

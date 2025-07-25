@@ -538,6 +538,10 @@ if __name__ == "__main__":
         # We're in serverless mode, start setup in background
         logger.info("Starting in RunPod serverless mode")
         setup_comfyui()  # This now runs in background
+    elif os.getenv("RUNPOD_POD_ID") or os.getenv("RUNPOD"):
+        # We're in regular RunPod pod mode, also start setup
+        logger.info("Starting in RunPod pod mode")
+        setup_comfyui()  # This now runs in background
     else:
         logger.info("Starting in local/development mode")
     
