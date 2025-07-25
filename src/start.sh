@@ -328,7 +328,7 @@ mkdir -p "$WORKFLOW_DIR"
 # Ensure the file exists in the current directory before moving it
 cd /
 
-SOURCE_DIR="/comfyui-wan/workflows"
+SOURCE_DIR="/workflows"
 
 # Ensure destination directory exists
 mkdir -p "$WORKFLOW_DIR"
@@ -422,12 +422,20 @@ for file in *.zip; do
 done
 
 # Start Flask API server first (if we have it)
-if [ -f "/comfyui-wan/src/flask_api.py" ]; then
+if [ -f "flask_api.py" ]; then
     echo "🌐 Starting Flask API server on port 8288..."
     mkdir -p /workspace
-    nohup python3 /comfyui-wan/src/flask_api.py > /workspace/flask_api.log 2>&1 &
+    nohup python3 flask_api.py > /workspace/flask_api.log 2>&1 &
     FLASK_PID=$!
     echo "Flask API started (PID: $FLASK_PID)"
+elif [ -f "/flask_api.py" ]; then
+    echo "🌐 Starting Flask API server on port 8288..."
+    mkdir -p /workspace
+    nohup python3 /flask_api.py > /workspace/flask_api.log 2>&1 &
+    FLASK_PID=$!
+    echo "Flask API started (PID: $FLASK_PID)"
+else
+    echo "⚠️  Flask API file not found, skipping API server startup"
 fi
 
 # Start ComfyUI

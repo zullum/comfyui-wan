@@ -99,6 +99,9 @@ RUN --mount=type=cache,target=/root/.cache/pip \
 # Copy source files  
 ADD src .
 
+# Copy workflows
+COPY workflows /workflows
+
 # Copy additional files
 COPY src/start_script.sh /start_script.sh
 RUN chmod +x /start_script.sh
