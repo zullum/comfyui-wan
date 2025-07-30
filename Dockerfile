@@ -13,7 +13,14 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
         python3.12 python3.12-venv python3.12-dev \
         python3-pip \
         curl ffmpeg ninja-build git aria2 git-lfs wget vim \
-        libgl1 libglib2.0-0 build-essential gcc && \
+        libgl1 libglib2.0-0 build-essential gcc ca-certificates gnupg && \
+    \
+    # Install Node.js 20.x (LTS)
+    mkdir -p /etc/apt/keyrings && \
+    curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg && \
+    echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_20.x nodistro main" | tee /etc/apt/sources.list.d/nodesource.list && \
+    apt-get update && \
+    apt-get install -y nodejs && \
     \
     # make Python3.12 the default python & pip
     ln -sf /usr/bin/python3.12 /usr/bin/python && \
@@ -40,7 +47,7 @@ RUN --mount=type=cache,target=/root/.cache/pip \
 RUN --mount=type=cache,target=/root/.cache/pip \
     pip install pyyaml gdown triton comfy-cli jupyterlab jupyterlab-lsp \
         jupyter-server jupyter-server-terminals \
-        ipykernel jupyterlab_code_formatter flask requests
+        ipykernel jupyterlab_code_formatter requests
 
 # ------------------------------------------------------------
 # ComfyUI install
@@ -52,6 +59,12 @@ RUN --mount=type=cache,target=/root/.cache/pip \
     pip install -r requirements.txt && \
     # Install additional dependencies
     pip install websocket-client
+
+# ------------------------------------------------------------
+# Install ComfyUI API
+# ------------------------------------------------------------
+RUN curl -L https://github.com/SaladTechnologies/comfyui-api/releases/latest/download/comfyui-api-linux -o /usr/local/bin/comfyui-api && \
+    chmod +x /usr/local/bin/comfyui-api
 
 FROM base AS final
 # Make sure to use the virtual environment here too
@@ -113,6 +126,13 @@ ENV download_480p_native_models=true \
     download_vace=true \
     change_preview_method=true \
     enable_optimizations=true
+
+# ComfyUI API configuration
+ENV COMFYUI_URL="http://127.0.0.1:8188" \
+    PORT=8288 \
+    LOG_LEVEL="info" \
+    SYNC_OUTPUT=true \
+    OUTPUT_PATH="/workspace/ComfyUI/output"
 
 # Create entrypoint script
 RUN echo '#!/bin/bash\n\

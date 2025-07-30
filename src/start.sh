@@ -421,22 +421,22 @@ for file in *.zip; do
     mv "$file" "${file%.zip}.safetensors"
 done
 
-# Start Flask API server first (if we have it)
-if [ -f "flask_api.py" ]; then
-    echo "🌐 Starting Flask API server on port 8288..."
-    mkdir -p /workspace
-    nohup python3 flask_api.py > /workspace/flask_api.log 2>&1 &
-    FLASK_PID=$!
-    echo "Flask API started (PID: $FLASK_PID)"
-elif [ -f "/flask_api.py" ]; then
-    echo "🌐 Starting Flask API server on port 8288..."
-    mkdir -p /workspace
-    nohup python3 /flask_api.py > /workspace/flask_api.log 2>&1 &
-    FLASK_PID=$!
-    echo "Flask API started (PID: $FLASK_PID)"
-else
-    echo "⚠️  Flask API file not found, skipping API server startup"
-fi
+# Start ComfyUI API server on port 8288
+echo "🌐 Starting ComfyUI API server on port 8288..."
+mkdir -p /workspace
+
+# Set ComfyUI API environment variables
+export COMFYUI_URL="http://127.0.0.1:8188"
+export PORT=8288
+export LOG_LEVEL="info"
+
+# Start ComfyUI API in background
+nohup comfyui-api > /workspace/comfyui_api.log 2>&1 &
+API_PID=$!
+echo "ComfyUI API started (PID: $API_PID)"
+
+# Wait a moment for API to initialize
+sleep 2
 
 # Start ComfyUI
 echo "▶️  Starting ComfyUI"
