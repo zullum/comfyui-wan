@@ -10,9 +10,12 @@ This is a Docker-based ComfyUI worker system optimized for Wan 2.1 video generat
 
 ### Docker Operations
 - **Build all images**: `docker buildx bake`
-- **Build specific variant**: `docker buildx bake flux1-dev` (or base, sdxl, sd3, flux1-schnell)
+- **Build specific variant**: `docker buildx bake wan` (or base)
 - **Run locally**: `docker-compose up`
-- **Access ComfyUI**: http://localhost:8188 (UI), http://localhost:8000 (API)
+- **Access services**: 
+  - ComfyUI Web UI: http://localhost:8188
+  - ComfyUI API: http://localhost:8288 (SaladTechnologies API)
+  - JupyterLab: http://localhost:8888
 
 ### RunPod Serverless
 - **Install dependencies**: `pip install -r builder/requirements.txt`
@@ -29,7 +32,9 @@ This is a Docker-based ComfyUI worker system optimized for Wan 2.1 video generat
 
 **Container Structure**:
 - Base image: NVIDIA CUDA 12.8.1 with Ubuntu 24.04
-- ComfyUI installation via `comfy-cli`
+- ComfyUI installation directly from GitHub
+- SaladTechnologies ComfyUI API binary (replaces Flask API)
+- Node.js 20.x LTS for API server runtime
 - Pre-installed custom nodes for video processing
 - JupyterLab environment for development
 - Optimized memory management with tcmalloc
@@ -49,12 +54,9 @@ This is a Docker-based ComfyUI worker system optimized for Wan 2.1 video generat
 
 ### Deployment Variants
 
-The system builds multiple specialized Docker images:
-- `base` - Clean ComfyUI without pre-downloaded models
-- `sdxl` - Stable Diffusion XL models included
-- `sd3` - Stable Diffusion 3 models included  
-- `flux1-schnell` - FLUX.1 Schnell models included
-- `flux1-dev` - FLUX.1 Dev models included
+The system builds Docker images via docker-bake.hcl:
+- `base` - Clean ComfyUI base installation
+- `wan` - Complete Wan 2.1 video generation setup (default)
 
 ### Runtime Configuration
 
@@ -65,22 +67,63 @@ The system builds multiple specialized Docker images:
 - `download_vace=true` - Download VACE enhancement models
 - `enable_optimizations=false` - Toggle SageAttention optimizations
 - `change_preview_method=true` - Enable video preview optimizations
+- `COMFYUI_URL=http://127.0.0.1:8188` - ComfyUI API connection
+- `PORT=8288` - ComfyUI API server port
+- `LOG_LEVEL=info` - API logging level
 
 **Startup Process**:
 1. ComfyUI installation moved to workspace volume
 2. Custom nodes updated (WanVideoWrapper, KJNodes)
 3. Model downloads based on environment flags
 4. SageAttention compilation (background)
-5. JupyterLab and ComfyUI startup
+5. ComfyUI API server startup on port 8288
+6. JupyterLab and ComfyUI startup
+
+### API Architecture
+
+**Dual-Mode Operation**:
+- **Pod Mode**: Full development environment with ComfyUI Web UI and API
+- **Serverless Mode**: RunPod serverless handler (`src/handler.py`) with optimized workflow execution
+
+**API Endpoints**:
+- **ComfyUI API**: Port 8288 - Production-ready REST API with Swagger docs at `/docs`
+- **RunPod Handler**: Serverless execution of `Wrapper-SelfForcing-ImageToVideo-60FPS` workflow
+- **Direct ComfyUI**: Port 8188 - Native ComfyUI WebSocket API
+
+**Request Flow**:
+1. Input validation and image preprocessing
+2. ComfyUI workflow execution via native API
+3. Video generation with frame interpolation
+4. Output handling (S3 upload or base64 encoding)
 
 ### Workflow Management
 
 Pre-configured workflows in `/workflows/`:
-- Native T2V/I2V at 32FPS and 60FPS
+- `Wrapper-SelfForcing-ImageToVideo-60FPS.json` - Main I2V workflow with RIFE interpolation
+- Native T2V/I2V workflows at various frame rates
 - VACE reference image and outpainting workflows
-- Wrapper-based workflows with self-forcing
 - Fun ControlNet integration with SDXL helper
-- Video extension and frame interpolation workflows
+
+## Project Structure
+
+**Key Directories**:
+- `src/` - Source code and startup scripts
+  - `handler.py` - RunPod serverless handler with workflow execution
+  - `start.sh` - Main container startup script with model downloads
+  - `download.py` - CivitAI model download utility
+- `workflows/` - ComfyUI workflow JSON files
+- `builder/` - Build-time dependencies and setup scripts
+- `docker-bake.hcl` - Multi-target Docker build configuration
+
+**Critical Files**:
+- `Dockerfile` - Multi-stage build with CUDA base, Node.js, and ComfyUI API
+- `docker-compose.yml` - Local development environment
+- `COMFYUI_API_USAGE.md` - Comprehensive API documentation and examples
+
+**Build Architecture**:
+- **Base stage**: CUDA environment with Python virtual environment
+- **Final stage**: Complete application with models and custom nodes
+- **Docker Bake**: Supports `base` and `wan` variants
 
 ## Development Notes
 
@@ -88,6 +131,13 @@ Pre-configured workflows in `/workflows/`:
 - Caching optimized with mount points
 - Virtual environment isolation
 - Parallel compilation with CMAKE_BUILD_PARALLEL_LEVEL=8
+- Node.js 20.x LTS installation for ComfyUI API
+
+**API Integration**:
+- SaladTechnologies ComfyUI API replaces Flask implementation
+- Native ComfyUI workflow compatibility
+- Production-ready job queue and status tracking
+- Built-in Swagger documentation
 
 **GPU Requirements**:
 - NVIDIA GPU with CUDA 12.8+ support

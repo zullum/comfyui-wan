@@ -435,6 +435,13 @@ nohup comfyui-api > /workspace/comfyui_api.log 2>&1 &
 API_PID=$!
 echo "ComfyUI API started (PID: $API_PID)"
 
+# Start Workflow Wrapper Service in background
+cd /workspace
+nohup python3 workflow_wrapper.py > /workspace/workflow_wrapper.log 2>&1 &
+WRAPPER_PID=$!
+echo "Workflow Wrapper started (PID: $WRAPPER_PID)"
+cd "$COMFYUI_DIR"
+
 # Wait a moment for API to initialize
 sleep 2
 

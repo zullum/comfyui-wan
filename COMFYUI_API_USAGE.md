@@ -39,69 +39,101 @@ Interactive Swagger documentation for all available endpoints.
 
 ### Execute Workflow
 ```bash
-POST http://localhost:8288/v1/queue/prompt
+POST http://localhost:8288/prompt
 ```
 
 ## Using the Wrapper Self-Forcing I2V 60FPS Workflow
 
+### Important: API Request Format
+
+The ComfyUI API expects a specific format where the `prompt` field contains a JSON object with numbered node IDs. Each node must have `inputs` and `class_type` fields.
+
 ### Basic Usage
 
-To generate a 60FPS video from an image using the wrapper self-forcing workflow:
+To use your existing workflow file directly:
 
 ```bash
-curl -X POST http://localhost:8288/v1/queue/prompt \
+# First, load your workflow JSON and modify the LoadImage node
+curl -X POST http://localhost:8288/prompt \
   -H "Content-Type: application/json" \
   -d '{
+    "id": "unique-request-id",
     "prompt": {
-      "input_image": {
+      "218": {
         "inputs": {
           "image": "https://example.com/your-image.jpg",
           "upload": "image"
         },
         "class_type": "LoadImage"
       }
-    }
+    },
+    "webhook": "https://your-webhook.com/notify"
   }'
 ```
 
-### Advanced Configuration Example
+**Note**: The above example shows only the LoadImage node. For a complete workflow, you need to include all nodes from your `Wrapper-SelfForcing-ImageToVideo-60FPS.json` file.
+
+### Complete Workflow Example
+
+For a full I2V workflow, you would need to convert your ComfyUI workflow file to the API format. Here's a simplified example structure:
 
 ```json
 {
+  "id": "12345678-1234-1234-1234-123456789abc",
   "prompt": {
-    "load_image": {
+    "1": {
       "inputs": {
-        "image": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQ...",
+        "image": "https://example.com/input.jpg",
         "upload": "image"
       },
       "class_type": "LoadImage"
     },
-    "text_prompt_positive": {
+    "2": {
       "inputs": {
-        "text": "A beautiful woman walking towards the camera, cinematic lighting, high quality"
+        "text": "A beautiful woman walking towards the camera"
       },
-      "class_type": "TextPrompt"
+      "class_type": "CLIPTextEncode"
     },
-    "text_prompt_negative": {
+    "3": {
       "inputs": {
-        "text": "色调艳丽，过曝，静态，细节模糊不清, blurry, static, overexposed"
+        "text": "色调艳丽，过曝，静态，细节模糊不清"
       },
-      "class_type": "TextPrompt"
+      "class_type": "CLIPTextEncode"
     },
-    "wan_sampler": {
+    "4": {
+      "inputs": {
+        "model_name": "wan2.1_i2v_720p_14B_bf16.safetensors"
+      },
+      "class_type": "WanVideoModelLoader"
+    },
+    "5": {
       "inputs": {
         "steps": 5,
         "cfg": 1.0,
         "cfg_img": 8.0,
-        "seed": 42,
-        "denoise": 1.0
+        "seed": ["6", 0],
+        "model": ["4", 0],
+        "positive": ["2", 0],
+        "negative": ["3", 0],
+        "image": ["1", 0]
       },
       "class_type": "WanVideoSampler"
+    },
+    "6": {
+      "inputs": {
+        "seed": -1
+      },
+      "class_type": "Seed"
     }
   },
-  "client_id": "your-client-id"
+  "webhook": "https://your-webhook-url.com/notify",
+  "convert_output": {
+    "format": "mp4",
+    "options": {
+      "quality": "high"
+    }
+  }
 }
-```
 
 ### Response Format
 
@@ -118,7 +150,7 @@ The API returns a job ID that you can use to track progress:
 ### Checking Job Status
 
 ```bash
-GET http://localhost:8288/v1/history/{prompt_id}
+GET http://localhost:8288/history/{prompt_id}
 ```
 
 ### Downloading Results
@@ -126,8 +158,18 @@ GET http://localhost:8288/v1/history/{prompt_id}
 Once complete, files are available via:
 
 ```bash
-GET http://localhost:8288/v1/view?filename={output_filename}&subfolder=&type=output
+GET http://localhost:8288/view?filename={output_filename}&subfolder=&type=output
 ```
+
+### Using Your Existing Workflow File
+
+The easiest way to use the API is to load your existing `Wrapper-SelfForcing-ImageToVideo-60FPS.json` workflow and extract the `prompt` section. The workflow file contains a `workflow` object that needs to be converted to the API format.
+
+**Conversion Process**:
+1. Load your workflow JSON file
+2. Extract the relevant nodes and their connections
+3. Convert to the numbered node format expected by the API
+4. Replace image inputs with your image URL or base64 data
 
 ## Workflow Configuration Examples
 
@@ -243,7 +285,7 @@ tail -f /workspace/comfyui_*.log
 
 ### Workflow Conversion
 
-Your existing `Wrapper-SelfForcing-ImageToVideo-60FPS.json` workflow can be used directly with the new API by posting it to the `/v1/queue/prompt` endpoint.
+Your existing `Wrapper-SelfForcing-ImageToVideo-60FPS.json` workflow can be used directly with the new API by converting it to the proper format and posting it to the `/prompt` endpoint.
 
 ## Example Scripts
 
@@ -253,34 +295,56 @@ Your existing `Wrapper-SelfForcing-ImageToVideo-60FPS.json` workflow can be used
 import requests
 import base64
 import time
+import json
 
 # Load and encode image
 with open("input.jpg", "rb") as f:
     image_data = base64.b64encode(f.read()).decode()
 
-# Submit workflow
-response = requests.post("http://localhost:8288/v1/queue/prompt", json={
+# Load your existing workflow (you'll need to convert it to API format)
+# This is a simplified example - use your actual workflow structure
+payload = {
+    "id": "my-video-generation-job",
     "prompt": {
-        "load_image": {
+        "1": {
             "inputs": {
                 "image": f"data:image/jpeg;base64,{image_data}",
                 "upload": "image"
             },
             "class_type": "LoadImage"
+        },
+        "2": {
+            "inputs": {
+                "text": "A beautiful woman walking towards the camera"
+            },
+            "class_type": "CLIPTextEncode"
         }
-        # Add other workflow nodes here
-    }
-})
+        # Add all other nodes from your workflow here
+    },
+    "webhook": "https://your-webhook.com/notify"  # Optional
+}
 
-prompt_id = response.json()["prompt_id"]
+# Submit workflow
+response = requests.post("http://localhost:8288/prompt", json=payload)
+result = response.json()
+prompt_id = result["prompt_id"]
 print(f"Job submitted: {prompt_id}")
 
 # Poll for completion
 while True:
-    status = requests.get(f"http://localhost:8288/v1/history/{prompt_id}")
-    if status.status_code == 200 and status.json():
-        print("Job completed!")
-        break
+    status = requests.get(f"http://localhost:8288/history/{prompt_id}")
+    if status.status_code == 200:
+        history = status.json()
+        if prompt_id in history and "outputs" in history[prompt_id]:
+            print("Job completed!")
+            # Extract output files
+            outputs = history[prompt_id]["outputs"]
+            for node_id, node_output in outputs.items():
+                if "videos" in node_output:
+                    for video in node_output["videos"]:
+                        video_url = f"http://localhost:8288/view?filename={video['filename']}&type=output"
+                        print(f"Video available at: {video_url}")
+            break
     time.sleep(5)
 ```
 
@@ -289,19 +353,34 @@ while True:
 ```bash
 #!/bin/bash
 
-# Submit a simple text-to-video job
-curl -X POST http://localhost:8288/v1/queue/prompt \
+# Submit a simple image-to-video job
+curl -X POST http://localhost:8288/prompt \
   -H "Content-Type: application/json" \
   -d '{
+    "id": "curl-test-job",
     "prompt": {
-      "text_input": {
+      "1": {
+        "inputs": {
+          "image": "https://example.com/your-image.jpg",
+          "upload": "image"
+        },
+        "class_type": "LoadImage"
+      },
+      "2": {
         "inputs": {
           "text": "A beautiful sunset over mountains"
         },
-        "class_type": "TextPrompt"
+        "class_type": "CLIPTextEncode"
       }
-    }
+    },
+    "webhook": "https://your-webhook.com/notify"
   }'
+
+# Check status (replace PROMPT_ID with the returned prompt_id)
+curl -X GET "http://localhost:8288/history/PROMPT_ID"
+
+# Download result video (replace FILENAME with actual filename from history)
+curl -X GET "http://localhost:8288/view?filename=FILENAME&type=output" -o output_video.mp4
 ```
 
 ## Support

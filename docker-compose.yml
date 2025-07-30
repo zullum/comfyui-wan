@@ -23,7 +23,8 @@ services:
     ports:
       - "8888:8888"  # Jupyter
       - "8188:8188"  # ComfyUI
-      - "8288:8288"  # Flask API
+      - "8288:8288"  # ComfyUI API
+      - "8289:8289"  # Workflow Wrapper
     volumes:
       - ./data/comfyui/output:/workspace/ComfyUI/output
       - ./data/runpod-volume:/workspace
