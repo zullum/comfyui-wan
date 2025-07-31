@@ -425,31 +425,39 @@ for file in *.zip; do
     mv "$file" "${file%.zip}.safetensors"
 done
 
-# Start FastAPI ComfyUI Interface on port 8189
-echo "🌐 Starting FastAPI ComfyUI Interface on port 8189..."
+# Start ComfyUI FIRST
+echo "▶️  Starting ComfyUI"
+cd "$NETWORK_VOLUME/ComfyUI"
 mkdir -p /workspace
 
-# Start FastAPI server in background
+if [ "$enable_optimizations" = "false" ]; then
+    nohup python3 main.py --listen 0.0.0.0 > "$NETWORK_VOLUME/comfyui.log" 2>&1 &
+    COMFYUI_PID=$!
+    echo "ComfyUI started (PID: $COMFYUI_PID)"
+else
+    nohup python3 main.py --listen 0.0.0.0 --use-sage-attention > "$NETWORK_VOLUME/comfyui_${RUNPOD_POD_ID}_nohup.log" 2>&1 &
+    COMFYUI_PID=$!
+    echo "ComfyUI started with optimizations (PID: $COMFYUI_PID)"
+fi
+
+# Wait for ComfyUI to be ready
+echo "⏳ Waiting for ComfyUI to start..."
+until curl --silent --fail "$URL" --output /dev/null; do
+  echo "🔄  ComfyUI Starting Up... You can view the startup logs here: $NETWORK_VOLUME/comfyui_${RUNPOD_POD_ID}_nohup.log"
+  sleep 2
+done
+echo "🚀 ComfyUI is UP and ready!"
+
+# NOW start FastAPI ComfyUI Interface on port 8189
+echo "🌐 Starting FastAPI ComfyUI Interface on port 8189..."
 cd /workspace
 nohup python3 /src/comfyui_api.py > /workspace/fastapi.log 2>&1 &
 FASTAPI_PID=$!
 echo "FastAPI ComfyUI Interface started (PID: $FASTAPI_PID)"
-cd "$COMFYUI_DIR"
 
-# Wait a moment for API to initialize
-sleep 2
+# Wait for FastAPI to initialize
+sleep 3
+echo "✅ FastAPI ComfyUI Interface ready on port 8189"
 
-# Start ComfyUI
-echo "▶️  Starting ComfyUI"
-cd "$NETWORK_VOLUME/ComfyUI"
-if [ "$enable_optimizations" = "false" ]; then
-    python3 main.py --listen 0.0.0.0
-else
-    nohup python3 main.py --listen 0.0.0.0 --use-sage-attention > "$NETWORK_VOLUME/comfyui_${RUNPOD_POD_ID}_nohup.log" 2>&1 &
-    until curl --silent --fail "$URL" --output /dev/null; do
-      echo "🔄  ComfyUI Starting Up... You can view the startup logs here: $NETWORK_VOLUME/comfyui_${RUNPOD_POD_ID}_nohup.log"
-      sleep 2
-    done
-    echo "🚀 ComfyUI is UP"
-    sleep infinity
-fi
+# Keep container running
+sleep infinity
