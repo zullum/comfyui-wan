@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Test script for the Flask API server
+Test script for the FastAPI ComfyUI Interface
 Usage: python test_api.py
 """
 
@@ -10,8 +10,8 @@ import time
 import base64
 
 # Configuration
-API_URL = "http://localhost:8288"  # Change to your RunPod URL
-# For RunPod, use: http://YOUR_POD_ID-8288.proxy.runpod.net
+API_URL = "http://localhost:8189"  # Change to your RunPod URL
+# For RunPod, use: http://YOUR_POD_ID-8189.proxy.runpod.net
 
 def test_health():
     """Test health endpoint"""
@@ -22,18 +22,43 @@ def test_health():
     return response.status_code == 200
 
 def test_generate_video_with_url():
-    """Test video generation with image URL"""
-    print("\n📷 Testing video generation with image URL...")
+    """Test video generation with ComfyUI prompt format"""
+    print("\n📷 Testing video generation with ComfyUI prompt format...")
     
     payload = {
-        "image": "https://picsum.photos/720/1280",  # Random image
-        "positive_prompt": "A beautiful landscape with flowing water",
-        "negative_prompt": "blurry, low quality, static",
-        "width": 720,
-        "height": 1280,
-        "steps": 3,  # Reduced for faster testing
-        "num_frames": 41,  # Reduced for faster testing
-        "model_name": "wan2.1_i2v_720p_14B_bf16.safetensors"  # Use 720p model
+        "prompt": {
+            "218": {
+                "inputs": {
+                    "image": "https://picsum.photos/720/1280"
+                },
+                "class_type": "LoadImage"
+            },
+            "265": {
+                "inputs": {
+                    "text": "A beautiful landscape with flowing water"
+                },
+                "class_type": "Text Prompt (JPS)"
+            },
+            "266": {
+                "inputs": {
+                    "text": "blurry, low quality, static"
+                },
+                "class_type": "Text Prompt (JPS)"
+            },
+            "215": {
+                "inputs": {
+                    "generation_width": 720,
+                    "generation_height": 1280,
+                    "num_frames": 41
+                }
+            },
+            "205": {
+                "inputs": {
+                    "steps": 3,
+                    "seed": 12345
+                }
+            }
+        }
     }
     
     response = requests.post(f"{API_URL}/generate", json=payload)
@@ -44,30 +69,21 @@ def test_generate_video_with_url():
         return response.json()["job_id"]
     return None
 
-def test_generate_video_with_base64():
-    """Test video generation with base64 image"""
-    print("\n🖼️ Testing video generation with base64 image...")
+def test_workflow_info():
+    """Test workflow info endpoint"""
+    print("\n🔍 Testing workflow info...")
     
-    # Create a simple 1x1 pixel PNG as base64 for testing
-    tiny_png = b'\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01\x08\x02\x00\x00\x00\x90wS\xde\x00\x00\x00\tpHYs\x00\x00\x0b\x13\x00\x00\x0b\x13\x01\x00\x9a\x9c\x18\x00\x00\x00\nIDATx\x9cc```\x00\x00\x00\x04\x00\x01\xdd\x8d\xb4\x1c\x00\x00\x00\x00IEND\xaeB`\x82'
-    base64_image = f"data:image/png;base64,{base64.b64encode(tiny_png).decode()}"
-    
-    payload = {
-        "image": base64_image,
-        "positive_prompt": "A colorful abstract animation",
-        "width": 720,
-        "height": 1280,
-        "steps": 3,
-        "num_frames": 41
-    }
-    
-    response = requests.post(f"{API_URL}/generate", json=payload)
+    response = requests.get(f"{API_URL}/workflow/info")
     print(f"Status: {response.status_code}")
-    print(f"Response: {response.json()}")
     
     if response.status_code == 200:
-        return response.json()["job_id"]
-    return None
+        data = response.json()
+        print(f"Workflow file: {data['workflow_file']}")
+        print(f"Total nodes: {data['total_nodes']}")
+        print("Key nodes:")
+        for node_id, info in list(data['nodes'].items())[:5]:
+            print(f"  - {node_id}: {info['class_type']} ({info.get('title', '')})")
+    return response.status_code == 200
 
 def monitor_job(job_id):
     """Monitor job progress"""
@@ -128,7 +144,7 @@ def test_list_jobs():
 
 def main():
     """Run all tests"""
-    print("🚀 Starting Flask API tests...")
+    print("🚀 Starting FastAPI ComfyUI Interface tests...")
     print(f"API URL: {API_URL}")
     
     # Test health
@@ -139,6 +155,9 @@ def main():
     # Test basic info
     response = requests.get(f"{API_URL}/")
     print(f"\nAPI Info: {response.json()}")
+    
+    # Test workflow info
+    test_workflow_info()
     
     # Test video generation
     job_id = test_generate_video_with_url()

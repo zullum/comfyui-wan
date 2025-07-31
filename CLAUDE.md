@@ -14,7 +14,7 @@ This is a Docker-based ComfyUI worker system optimized for Wan 2.1 video generat
 - **Run locally**: `docker-compose up`
 - **Access services**: 
   - ComfyUI Web UI: http://localhost:8188
-  - ComfyUI API: http://localhost:8288 (SaladTechnologies API)
+  - FastAPI ComfyUI Interface: http://localhost:8189
   - JupyterLab: http://localhost:8888
 
 ### RunPod Serverless
@@ -33,8 +33,8 @@ This is a Docker-based ComfyUI worker system optimized for Wan 2.1 video generat
 **Container Structure**:
 - Base image: NVIDIA CUDA 12.8.1 with Ubuntu 24.04
 - ComfyUI installation directly from GitHub
-- SaladTechnologies ComfyUI API binary (replaces Flask API)
-- Node.js 20.x LTS for API server runtime
+- FastAPI ComfyUI Interface for direct WebSocket API integration
+- Python 3.11+ runtime for API server
 - Pre-installed custom nodes for video processing
 - JupyterLab environment for development
 - Optimized memory management with tcmalloc
@@ -67,16 +67,16 @@ The system builds Docker images via docker-bake.hcl:
 - `download_vace=true` - Download VACE enhancement models
 - `enable_optimizations=false` - Toggle SageAttention optimizations
 - `change_preview_method=true` - Enable video preview optimizations
-- `COMFYUI_URL=http://127.0.0.1:8188` - ComfyUI API connection
-- `PORT=8288` - ComfyUI API server port
-- `LOG_LEVEL=info` - API logging level
+- `COMFYUI_SERVER=127.0.0.1:8188` - ComfyUI server connection
+- `FASTAPI_PORT=8189` - FastAPI server port
+- `CLIENT_ID=auto-generated` - WebSocket client ID
 
 **Startup Process**:
 1. ComfyUI installation moved to workspace volume
 2. Custom nodes updated (WanVideoWrapper, KJNodes)
 3. Model downloads based on environment flags
 4. SageAttention compilation (background)
-5. ComfyUI API server startup on port 8288
+5. FastAPI ComfyUI Interface startup on port 8189
 6. JupyterLab and ComfyUI startup
 
 ### API Architecture
@@ -86,15 +86,16 @@ The system builds Docker images via docker-bake.hcl:
 - **Serverless Mode**: RunPod serverless handler (`src/handler.py`) with optimized workflow execution
 
 **API Endpoints**:
-- **ComfyUI API**: Port 8288 - Production-ready REST API with Swagger docs at `/docs`
+- **FastAPI Interface**: Port 8189 - Direct ComfyUI WebSocket API integration with docs at `/docs`
 - **RunPod Handler**: Serverless execution of `Wrapper-SelfForcing-ImageToVideo-60FPS` workflow
 - **Direct ComfyUI**: Port 8188 - Native ComfyUI WebSocket API
 
 **Request Flow**:
-1. Input validation and image preprocessing
-2. ComfyUI workflow execution via native API
-3. Video generation with frame interpolation
-4. Output handling (S3 upload or base64 encoding)
+1. Workflow updates received via FastAPI
+2. Base workflow merged with user updates
+3. Direct submission to ComfyUI WebSocket API
+4. Real-time job status tracking
+5. Output file handling and download links
 
 ### Workflow Management
 
@@ -131,13 +132,13 @@ Pre-configured workflows in `/workflows/`:
 - Caching optimized with mount points
 - Virtual environment isolation
 - Parallel compilation with CMAKE_BUILD_PARALLEL_LEVEL=8
-- Node.js 20.x LTS installation for ComfyUI API
+- Python FastAPI server for ComfyUI integration
 
 **API Integration**:
-- SaladTechnologies ComfyUI API replaces Flask implementation
-- Native ComfyUI workflow compatibility
-- Production-ready job queue and status tracking
-- Built-in Swagger documentation
+- FastAPI ComfyUI Interface provides direct WebSocket integration
+- Native ComfyUI workflow compatibility with base workflow loading
+- Real-time job tracking via WebSocket connections
+- Built-in FastAPI documentation
 
 **GPU Requirements**:
 - NVIDIA GPU with CUDA 12.8+ support

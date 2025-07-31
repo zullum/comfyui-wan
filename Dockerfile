@@ -61,11 +61,6 @@ RUN --mount=type=cache,target=/root/.cache/pip \
     # Install additional dependencies
     pip install websocket-client
 
-# ------------------------------------------------------------
-# Install ComfyUI API
-# ------------------------------------------------------------
-RUN curl -L https://github.com/SaladTechnologies/comfyui-api/releases/latest/download/comfyui-api-linux -o /usr/local/bin/comfyui-api && \
-    chmod +x /usr/local/bin/comfyui-api
 
 FROM base AS final
 # Make sure to use the virtual environment here too
@@ -128,11 +123,10 @@ ENV download_480p_native_models=true \
     change_preview_method=true \
     enable_optimizations=true
 
-# ComfyUI API configuration
-ENV COMFYUI_URL="http://127.0.0.1:8188" \
-    PORT=8288 \
+# FastAPI ComfyUI Interface configuration
+ENV COMFYUI_SERVER="127.0.0.1:8188" \
+    FASTAPI_PORT=8189 \
     LOG_LEVEL="info" \
-    SYNC_OUTPUT=true \
     OUTPUT_PATH="/workspace/ComfyUI/output"
 
 # Create entrypoint script

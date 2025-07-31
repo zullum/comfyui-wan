@@ -31,7 +31,7 @@ This repository provides a RunPod serverless API for generating high-quality vid
 **Required Ports**:
 - 8888 (Jupyter)
 - 8188 (ComfyUI) 
-- 8288 (Flask API)
+- 8189 (FastAPI ComfyUI Interface)
 
 **Environment Variables**:
 ```
@@ -47,7 +47,7 @@ change_preview_method=true
    - Go to [RunPod Console](https://runpod.io/console/pods)
    - Click "Deploy" on a GPU pod
    - Select "Custom" image: `szulic/comfyui-wan:latest-wan`
-   - Configure ports: 8888, 8188, 8288
+   - Configure ports: 8888, 8188, 8189
    - Select GPU: RTX 4090 or better (24GB+ VRAM recommended)
 
 2. **Configure Environment Variables** (optional):
@@ -457,6 +457,7 @@ comfyui-wan/
 │   └── setup.sh           # Build-time setup script
 ├── src/
 │   ├── handler.py         # Main serverless handler
+│   ├── comfyui_api.py     # FastAPI ComfyUI Interface
 │   ├── start.sh           # ComfyUI setup script
 │   ├── start_script.sh    # Container startup script
 │   └── download.py        # Model download utility

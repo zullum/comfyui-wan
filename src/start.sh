@@ -295,6 +295,10 @@ fi
 
 echo "✅ All models downloaded successfully!"
 
+# Install FastAPI dependencies for ComfyUI Interface
+echo "📦 Installing FastAPI dependencies..."
+pip install --no-cache-dir fastapi>=0.104.1 uvicorn>=0.24.0 pydantic>=2.5.0 requests>=2.31.0 python-multipart>=0.0.6 websocket-client>=1.6.0
+
 # poll every 5 s until the PID is gone
   while kill -0 "$BUILD_PID" 2>/dev/null; do
     echo "🛠️ Building SageAttention in progress... (this can take around 5 minutes)"
@@ -421,25 +425,15 @@ for file in *.zip; do
     mv "$file" "${file%.zip}.safetensors"
 done
 
-# Start ComfyUI API server on port 8288
-echo "🌐 Starting ComfyUI API server on port 8288..."
+# Start FastAPI ComfyUI Interface on port 8189
+echo "🌐 Starting FastAPI ComfyUI Interface on port 8189..."
 mkdir -p /workspace
 
-# Set ComfyUI API environment variables
-export COMFYUI_URL="http://127.0.0.1:8188"
-export PORT=8288
-export LOG_LEVEL="info"
-
-# Start ComfyUI API in background
-nohup comfyui-api > /workspace/comfyui_api.log 2>&1 &
-API_PID=$!
-echo "ComfyUI API started (PID: $API_PID)"
-
-# Start Workflow Wrapper Service in background
+# Start FastAPI server in background
 cd /workspace
-nohup python3 workflow_wrapper.py > /workspace/workflow_wrapper.log 2>&1 &
-WRAPPER_PID=$!
-echo "Workflow Wrapper started (PID: $WRAPPER_PID)"
+nohup python3 /src/comfyui_api.py > /workspace/fastapi.log 2>&1 &
+FASTAPI_PID=$!
+echo "FastAPI ComfyUI Interface started (PID: $FASTAPI_PID)"
 cd "$COMFYUI_DIR"
 
 # Wait a moment for API to initialize

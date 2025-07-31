@@ -49,7 +49,7 @@ docker-compose up
 # Test services:
 # - Jupyter: http://localhost:8888
 # - ComfyUI: http://localhost:8188  
-# - Flask API: http://localhost:8288
+# - FastAPI Interface: http://localhost:8189
 ```
 
 ## RunPod Configuration
@@ -59,7 +59,7 @@ docker-compose up
 **Ports to expose**:
 - 8888 (Jupyter)
 - 8188 (ComfyUI)
-- 8288 (Flask API)
+- 8189 (FastAPI ComfyUI Interface)
 
 **Environment Variables**:
 ```
@@ -81,7 +81,7 @@ change_preview_method=true
 comfyui-wan/
 ├── src/
 │   ├── start.sh          # Main startup script
-│   ├── flask_api.py      # REST API wrapper
+│   ├── comfyui_api.py    # FastAPI ComfyUI Interface
 │   └── handler.py        # RunPod serverless handler
 ├── workflows/            # ComfyUI workflow files
 ├── Dockerfile            # Container definition
@@ -90,4 +90,4 @@ comfyui-wan/
 └── .github/workflows/    # GitHub Actions CI/CD
 ```
 
-This maintains compatibility with the original Hearmeman24/comfyui-wan structure while adding the Flask API and proper Docker build automation.
+This maintains compatibility with the original Hearmeman24/comfyui-wan structure while adding the FastAPI ComfyUI Interface and proper Docker build automation.
